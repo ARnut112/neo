@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>อาณัฐ ชื่นอารมณ์ — ช่างภาพ</title>
+<meta name="description" content="พอร์ตโฟลิโอผลงานถ่ายภาพของอาณัฐ ชื่นอารมณ์ ช่างภาพพอร์เทรต แลนด์สเคป และงานแต่งงาน">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header" id="top">
+  <a class="brand" href="#top">อาณัฐ<span class="brand-dot">.</span></a>
+  <nav class="main-nav" id="main-nav">
+    <a href="#works">ผลงาน</a>
+    <a href="#about">เกี่ยวกับ</a>
+    <a href="#contact">ติดต่อ</a>
+  </nav>
+  <button class="nav-toggle" id="nav-toggle" aria-label="เปิดเมนู" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<main>
+
+  <section class="hero" id="hero">
+    <div class="hero-media">
+      <img src="img/mencar.jpg" alt="ภาพถ่ายแม่น้ำท่ามกลางหุบเขา บรรยากาศเช้าที่มีหมอก" class="hero-img">
+    </div>
+    <div class="hero-copy">
+      <p class="hero-kicker">ช่างภาพ · สิงห์บุรี</p>
+      <h1 class="hero-title">แสงที่ตกลงบน<br>ใบหน้าคน และ<br>เส้นขอบฟ้า</h1>
+      <p class="hero-sub">ผมชื่ออาณัฐ ถ่ายภาพมา 6 ปี เก็บเรื่องราวของคนและสถานที่ ผ่านฟิล์มและดิจิทัล</p>
+      <a href="#works" class="hero-link">ดูผลงานทั้งหมด</a>
+    </div>
+  </section>
+
+  <section class="works" id="works">
+    <div class="works-head">
+      <h2>ผลงานคัดสรร</h2>
+      <div class="filters" id="filters">
+        <button class="filter-btn is-active" data-filter="all">ทั้งหมด</button>
+        <button class="filter-btn" data-filter="portrait">พอร์เทรต</button>
+        <button class="filter-btn" data-filter="landscape">แลนด์สเคป</button>
+        <button class="filter-btn" data-filter="street">สตรีท</button>
+        <button class="filter-btn" data-filter="wedding">งานแต่งงาน</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid">
+      <figure class="tile tile--tall" data-cat="portrait">
+        <img src="https://picsum.photos/id/1027/800/1100" alt="ภาพพอร์เทรตหญิงสาวยิ้มในแสงธรรมชาติ" loading="lazy">
+        <figcaption>ใบหน้าในแสงบ่าย, 2024</figcaption>
+      </figure>
+      <figure class="tile" data-cat="landscape">
+        <img src="https://picsum.photos/id/1043/900/650" alt="ภาพทิวทัศน์ภูเขาและทะเลสาบยามพระอาทิตย์ตก" loading="lazy">
+        <figcaption>เขาใหญ่ยามเย็น, 2023</figcaption>
+      </figure>
+      <figure class="tile" data-cat="street">
+        <img src="https://picsum.photos/id/1011/900/700" alt="ภาพถนนในเมืองยามค่ำคืนมีแสงไฟ" loading="lazy">
+        <figcaption>ตรอกเยาวราช, 2024</figcaption>
+      </figure>
+      <figure class="tile tile--tall" data-cat="wedding">
+        <img src="https://picsum.photos/id/1062/800/1100" alt="ภาพคู่บ่าวสาวกำลังจับมือกันในสวน" loading="lazy">
+        <figcaption>งานแต่งพลอย & ต้น, 2024</figcaption>
+      </figure>
+      <figure class="tile" data-cat="portrait">
+        <img src="https://picsum.photos/id/1005/900/650" alt="ภาพพอร์เทรตชายหนุ่มมองออกไปนอกหน้าต่าง" loading="lazy">
+        <figcaption>ริมหน้าต่าง, 2022</figcaption>
+      </figure>
+      <figure class="tile tile--wide" data-cat="landscape">
+        <img src="https://picsum.photos/id/1018/1200/700" alt="ภาพหุบเขาและแม่น้ำถ่ายจากมุมสูง" loading="lazy">
+        <figcaption>หุบเขาน่าน, 2023</figcaption>
+      </figure>
+      <figure class="tile" data-cat="street">
+        <img src="https://picsum.photos/id/1024/900/700" alt="ภาพชายชราเดินผ่านตลาดเช้า" loading="lazy">
+        <figcaption>ตลาดเช้าสด, 2021</figcaption>
+      </figure>
+      <figure class="tile tile--tall" data-cat="wedding">
+        <img src="https://picsum.photos/id/1069/800/1100" alt="ภาพเจ้าสาวกำลังหัวเราะระหว่างพิธี" loading="lazy">
+        <figcaption>งานแต่งนุช & กร, 2023</figcaption>
+      </figure>
+      <figure class="tile" data-cat="portrait">
+        <img src="https://picsum.photos/id/1074/900/650" alt="ภาพพอร์เทรตเด็กหญิงถือดอกไม้" loading="lazy">
+        <figcaption>ดอกไม้ในมือเล็ก, 2024</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-media">
+      <img src="img/pic (3).jpg" alt="ภาพถ่ายอาณัฐกำลังถือกล้องอยู่ในป่า">
+    </div>
+    <div class="about-copy">
+      <h2>เกี่ยวกับผม</h2>
+      <p>ผมเริ่มถ่ายภาพจากกล้องฟิล์มมือสองของพ่อ ตอนอายุสิบเจ็ด สิ่งที่ติดใจตั้งแต่วันนั้นคือความเงียบก่อนกดชัตเตอร์ ช่วงเวลาที่ทุกอย่างในเฟรมลงตัวพอดี</p>
+      <p>สิบสองปีผ่านไป ผมยังตามหาช่วงเวลานั้นอยู่ ไม่ว่าจะเป็นใบหน้าคนแปลกหน้าบนรถไฟฟ้า แสงเช้าที่ลอดผ่านม่านห้องเจ้าสาว หรือหมอกที่ลอยเหนือทุ่งนาในดอยแม่สลอง งานของผมจึงเดินทางระหว่างสามแนวหลัก คือภาพคน ภาพทิวทัศน์ และภาพงานแต่งงาน</p>
+      <p>รับงานถ่ายทั่วประเทศ และเดินทางไปต่างประเทศได้ตามตกลง</p>
+      <ul class="about-facts">
+        <li><span>ประสบการณ์</span>12 ปี</li>
+        <li><span>ฐานที่อยู่</span>กรุงเทพฯ</li>
+        <li><span>รับงาน</span>ทั่วประเทศ / ต่างประเทศ</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2>ติดต่องาน</h2>
+    <p>สนใจให้ถ่ายภาพ หรืออยากคุยเรื่องงานก่อน ทักมาได้เลย ปกติตอบกลับภายในหนึ่งวัน</p>
+    <div class="contact-links">
+      <a href="mailto:arnut369@gmail.com">arnut369@gmail.com</a>
+      <a href="tel:+6680167027">080-167-027</a>
+      <a href="https://www.instagram.com/ar_nut/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://line.me" target="_blank" rel="noopener">Line</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year"></span> อาณัฐ ชื่นอารมณ์</p>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="ปิด">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="ภาพก่อนหน้า">‹</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="ภาพถัดไป">›</button>
+  <p class="lightbox-caption" id="lightbox-caption"></p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
