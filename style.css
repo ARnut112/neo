@@ -413,7 +413,7 @@ h1, h2 {
   position: relative;
   flex: 0 0 auto;
   width: clamp(220px, 70vw, 360px);
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   background: var(--surface);
