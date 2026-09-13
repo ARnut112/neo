@@ -662,6 +662,41 @@ h1, h2 {
   }
   .nav-toggle { display: flex; }
 
+  .hero {
+    align-items: flex-end;
+  }
+
+  .hero::after {
+    background: linear-gradient(180deg, rgba(18,17,16,0.12) 0%, rgba(18,17,16,0.78) 100%);
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    padding: 0 var(--gutter) 1.5rem;
+  }
+
+  .hero-kicker {
+    font-size: 0.76rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.35rem, 10vw, 3.2rem);
+    line-height: 0.95;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-title-small {
+    font-size: clamp(1.3rem, 5vw, 1.9rem);
+    margin-top: 0.08rem;
+  }
+
+  .hero-sub {
+    font-size: 0.92rem;
+    max-width: 100%;
+    margin-bottom: 0.9rem;
+  }
+
   .hero-signatures {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
