@@ -1,5 +1,30 @@
 document.getElementById("year").textContent = new Date().getFullYear();
 
+const siteHeader = document.querySelector(".site-header");
+let lastScrollY = window.scrollY;
+
+function updateHeaderState() {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY > 20) {
+    siteHeader.classList.add("is-scrolled");
+  } else {
+    siteHeader.classList.remove("is-scrolled");
+  }
+
+  if (currentScrollY > lastScrollY && currentScrollY > 120) {
+    siteHeader.classList.add("is-hidden");
+  } else {
+    siteHeader.classList.remove("is-hidden");
+  }
+
+  lastScrollY = currentScrollY;
+}
+
+window.addEventListener("scroll", () => {
+  window.requestAnimationFrame(updateHeaderState);
+}, { passive: true });
+
 /* Mobile nav toggle */
 const navToggle = document.getElementById("nav-toggle");
 const mainNav = document.getElementById("main-nav");
