@@ -199,6 +199,14 @@ h1, h2 {
   margin-bottom: 1.25rem;
 }
 
+.hero-title-small {
+  display: block;
+  font-size: clamp(0.95rem, 1.8vw, 1.45rem);
+  line-height: 1.1;
+  margin-top: 0.05rem;
+  opacity: 0.9;
+}
+
 .hero-sub {
   color: var(--ink-muted);
   max-width: 30rem;
