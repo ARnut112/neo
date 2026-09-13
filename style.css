@@ -209,16 +209,20 @@ h1, h2 {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-top: 0.5rem;
 }
 
 .hero-signature {
   display: block;
-  width: clamp(5.5rem, 10vw, 8rem);
+  width: clamp(6rem, 11vw, 8.5rem);
   max-width: 100%;
-  opacity: 0.9;
+  opacity: 1;
   filter: drop-shadow(0 8px 18px rgba(201, 161, 59, 0.12));
+}
+
+.hero-signature:first-child {
+  width: clamp(8rem, 17vw, 11.5rem);
 }
 
 .hero-actions {
