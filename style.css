@@ -576,6 +576,45 @@ h1, h2 {
   text-align: center;
 }
 
+.back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(201, 161, 59, 0.8);
+  border-radius: 999px;
+  background: rgba(18, 17, 16, 0.88);
+  color: var(--ink);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  z-index: 80;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover,
+.back-to-top:focus-visible {
+  border-color: var(--gold);
+  background: rgba(201, 161, 59, 0.12);
+}
+
+.back-to-top i {
+  font-size: 1rem;
+  color: var(--gold);
+}
+
 /* ---------------------------------------------------
    Lightbox
 --------------------------------------------------- */

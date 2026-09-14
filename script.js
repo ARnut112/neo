@@ -25,6 +25,25 @@ window.addEventListener("scroll", () => {
   window.requestAnimationFrame(updateHeaderState);
 }, { passive: true });
 
+const backToTopBtn = document.getElementById("back-to-top");
+
+function updateBackToTopButton() {
+  if (!backToTopBtn) return;
+  const visible = window.scrollY > 320;
+  backToTopBtn.classList.toggle("is-visible", visible);
+}
+
+window.addEventListener("scroll", () => {
+  window.requestAnimationFrame(updateBackToTopButton);
+}, { passive: true });
+
+backToTopBtn?.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
+
 /* Mobile nav toggle */
 const navToggle = document.getElementById("nav-toggle");
 const mainNav = document.getElementById("main-nav");
