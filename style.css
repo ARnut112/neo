@@ -396,17 +396,12 @@ h1, h2 {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
   padding: 0.25rem var(--gutter) 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--gold-dim) transparent;
+  cursor: grab;
+  scrollbar-width: none;
 }
-.highlight-scroll::-webkit-scrollbar { height: 6px; }
-.highlight-scroll::-webkit-scrollbar-track { background: transparent; }
-.highlight-scroll::-webkit-scrollbar-thumb {
-  background: var(--gold-dim);
-  border-radius: 999px;
-}
+.highlight-scroll:active { cursor: grabbing; }
+.highlight-scroll::-webkit-scrollbar { display: none; }
 
 .feature-card,
 .mosaic {

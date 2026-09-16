@@ -132,3 +132,57 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") openLightbox(currentIndex - 1);
   if (e.key === "ArrowRight") openLightbox(currentIndex + 1);
 });
+
+/* Highlight auto-scroll */
+const highlightScrolls = document.querySelectorAll(".highlight-scroll");
+
+function setupHighlightAutoScroll(scroll) {
+  let animationId;
+  let isVisible = false;
+  let lastTimestamp = 0;
+  let loopWidth = 0;
+
+  Array.from(scroll.children).forEach((card) => {
+    const clone = card.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    scroll.appendChild(clone);
+  });
+
+  loopWidth = scroll.scrollWidth / 2;
+
+  function stopAutoScroll() {
+    window.cancelAnimationFrame(animationId);
+    animationId = undefined;
+    lastTimestamp = 0;
+  }
+
+  function startAutoScroll() {
+    stopAutoScroll();
+    if (!isVisible) return;
+
+    function animate(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const elapsed = Math.min(timestamp - lastTimestamp, 40);
+      lastTimestamp = timestamp;
+      scroll.scrollLeft += elapsed * 0.035;
+
+      if (scroll.scrollLeft >= loopWidth) {
+        scroll.scrollLeft -= loopWidth;
+      }
+
+      animationId = window.requestAnimationFrame(animate);
+    }
+
+    animationId = window.requestAnimationFrame(animate);
+  }
+
+  const observer = new IntersectionObserver(([entry]) => {
+    isVisible = entry.isIntersecting;
+    if (isVisible) startAutoScroll();
+    else stopAutoScroll();
+  }, { threshold: 0.2 });
+
+  observer.observe(scroll);
+}
+
+highlightScrolls.forEach(setupHighlightAutoScroll);
