@@ -141,14 +141,22 @@ function setupHighlightAutoScroll(scroll) {
   let isVisible = false;
   let lastTimestamp = 0;
   let loopWidth = 0;
+  const direction = 1;
 
-  Array.from(scroll.children).forEach((card) => {
+  const originalCards = Array.from(scroll.children);
+  const loopMarker = document.createElement("span");
+  loopMarker.className = "highlight-loop-marker";
+  loopMarker.setAttribute("aria-hidden", "true");
+  scroll.appendChild(loopMarker);
+
+  originalCards.forEach((card) => {
     const clone = card.cloneNode(true);
     clone.setAttribute("aria-hidden", "true");
     scroll.appendChild(clone);
   });
 
-  loopWidth = scroll.scrollWidth / 2;
+  loopWidth = loopMarker.offsetLeft - originalCards[0].offsetLeft;
+  scroll.scrollLeft = loopWidth / 2;
 
   function stopAutoScroll() {
     window.cancelAnimationFrame(animationId);
@@ -164,9 +172,9 @@ function setupHighlightAutoScroll(scroll) {
       if (!lastTimestamp) lastTimestamp = timestamp;
       const elapsed = Math.min(timestamp - lastTimestamp, 40);
       lastTimestamp = timestamp;
-      scroll.scrollLeft += elapsed * 0.035;
+      scroll.scrollLeft += elapsed * 0.035 * direction;
 
-      if (scroll.scrollLeft >= loopWidth) {
+      if (direction === 1 && scroll.scrollLeft >= loopWidth) {
         scroll.scrollLeft -= loopWidth;
       }
 
