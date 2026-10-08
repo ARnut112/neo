@@ -2,6 +2,8 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>อาณัฐ ชื่นอารมณ์ — ช่างภาพ</title>
 <meta name="description" content="พอร์ตโฟลิโอผลงานถ่ายภาพของอาณัฐ ชื่นอารมณ์ ช่างภาพพอร์เทรต แลนด์สเคป และงานแต่งงาน">
@@ -18,22 +20,19 @@
 <meta property="og:site_name" content="อาณัฐ ชื่นอารมณ์ — ช่างภาพ">
 <meta property="og:title" content="อาณัฐ ชื่นอารมณ์ — ช่างภาพ">
 <meta property="og:description" content="พอร์ตโฟลิโอผลงานถ่ายภาพของอาณัฐ ชื่นอารมณ์ ช่างภาพพอร์เทรต แลนด์สเคป และงานแต่งงาน ประจำจังหวัดสิงห์บุรี">
-<meta property="og:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/img/mencar.jpg">
-<meta property="og:url" content="https://YOUR-USERNAME.github.io/YOUR-REPO/">
 <meta property="og:locale" content="th_TH">
 
 <!-- Twitter / X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="อาณัฐ ชื่นอารมณ์ — ช่างภาพ">
 <meta name="twitter:description" content="พอร์ตโฟลิโอผลงานถ่ายภาพ พอร์เทรต แลนด์สเคป และงานแต่งงาน">
-<meta name="twitter:image" content="https://YOUR-USERNAME.github.io/YOUR-REPO/img/mencar.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261008-original-slider">
 </head>
 <body>
+<a class="skip-link" href="#main">ข้ามไปยังเนื้อหา</a>
 
 <header class="site-header" id="top">
   <a class="brand" href="#top">อาณัฐ<span class="brand-dot">.</span></a>
@@ -47,60 +46,62 @@
   </button>
 </header>
 
-<main>
+<main id="main">
 
   <section class="hero" id="hero">
     <div class="hero-media">
-      <img src="img/mencar.jpg" alt="ภาพถ่ายแม่น้ำท่ามกลางหุบเขา บรรยากาศเช้าที่มีหมอก" class="hero-img">
+      <img src="img/mencar.jpg" alt="ภาพถ่ายแม่น้ำท่ามกลางหุบเขา บรรยากาศเช้าที่มีหมอก" class="hero-img" fetchpriority="high" width="3000" height="2000" decoding="async">
     </div>
     <div class="hero-copy">
       <p class="hero-kicker">ช่างภาพ · สิงห์บุรี</p>
       <h1 class="hero-title">PHOTOGRAPHER<br><span class="hero-title-small">MAIN&CANDID</span></h1>
       <p class="hero-sub">ผมอาณัฐ ชื่นอารมณ์ ช่างภาพฟรีแลนซ์ มีประสบการณ์ถ่ายภาพมากกว่า 6ปี เก็บเรื่องราวของคนและสถานที่ ผ่านกล้องและเลนส์</p>
+
       <div class="hero-signatures" aria-label="ลายเซ็นของอาณัฐ ชื่นอารมณ์">
-        <img src="img/watermark/Model 04.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 1" class="hero-signature">
-        <img src="img/watermark/Drymatiny_01.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 2" class="hero-signature">
-        <img src="img/watermark/Stupid 01.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 3" class="hero-signature">
+        <img src="img/watermark/Model 04.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 1" class="hero-signature" width="1592" height="639" decoding="async">
+        <img src="img/watermark/Drymatiny_01.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 2" class="hero-signature" width="1890" height="1417" decoding="async">
+        <img src="img/watermark/Stupid 01.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 3" class="hero-signature" width="672" height="504" decoding="async">
       </div>
     </div>
   </section>
 
   <section class="works" id="works">
+    <div class="works-head"><div><p class="eyebrow">SELECTED MOMENTS · 01</p><h2>ทุกภาพ มีเรื่องราว</h2></div><p class="section-note">เลือกภาพเพื่อชมเต็มจอ</p></div>
     <div class="grid" id="grid">
       <figure class="tile tile--tall" data-cat="portrait">
-        <img src="img/port/pra.jpg" alt="Wat PhraNon ChakSi @Sing Buri" loading="lazy">
+        <img src="img/port/pra.jpg" alt="Wat PhraNon ChakSi @Sing Buri" loading="lazy" width="2449" height="3674" decoding="async">
         <figcaption>Wat PhraNon ChakSi @Sing Buri</figcaption>
       </figure>
       <figure class="tile" data-cat="landscape">
-        <img src="img/port/aman.jpg" alt="A man under the shadow" loading="lazy">
+        <img src="img/port/aman.jpg" alt="A man under the shadow" loading="lazy" width="2773" height="1560" decoding="async">
         <figcaption>A man under the shadow</figcaption>
       </figure>
       <figure class="tile" data-cat="street">
-        <img src="img/port/SunF.jpg" alt="Sunflower" loading="lazy">
+        <img src="img/port/SunF.jpg" alt="Sunflower" loading="lazy" width="3598" height="5396" decoding="async">
         <figcaption>Sunflower</figcaption>
       </figure>
       <figure class="tile tile--tall" data-cat="wedding">
-        <img src="img/port/p.jpg" alt="Runner" loading="lazy">
+        <img src="img/port/p.jpg" alt="Runner" loading="lazy" width="1153" height="2048" decoding="async">
         <figcaption>Runner</figcaption>
       </figure>
       <figure class="tile" data-cat="portrait">
-        <img src="img/port/pong.jpg" alt="Lotus" loading="lazy">
+        <img src="img/port/pong.jpg" alt="Lotus" loading="lazy" width="3008" height="2008" decoding="async">
         <figcaption>Lotus</figcaption>
       </figure>
       <figure class="tile tile--wide" data-cat="landscape">
-        <img src="img/port/gan.jpg" alt="Little smile" loading="lazy">
+        <img src="img/port/gan.jpg" alt="Little smile" loading="lazy" width="6016" height="4016" decoding="async">
         <figcaption>Little smile</figcaption>
       </figure>
       <figure class="tile" data-cat="street">
-        <img src="img/port/wat2.jpg" alt="product" loading="lazy">
+        <img src="img/port/wat2.jpg" alt="product" loading="lazy" width="2048" height="1536" decoding="async">
         <figcaption>@Ayuttaya</figcaption>
       </figure>
       <figure class="tile tile--tall" data-cat="wedding">
-        <img src="img/port/wat.jpg" alt="Bike" loading="lazy">
+        <img src="img/port/wat.jpg" alt="Bike" loading="lazy" width="2048" height="1368" decoding="async">
         <figcaption>Wat Phikul Thong @Thachang Sing Buri</figcaption>
       </figure>
       <figure class="tile" data-cat="portrait">
-        <img src="img/port/milk.jpg" alt="Close up" loading="lazy">
+        <img src="img/port/milk.jpg" alt="Close up" loading="lazy" width="3823" height="5437" decoding="async">
         <figcaption>Close up</figcaption>
       </figure>
     </div>
@@ -113,28 +114,28 @@
       <div class="highlight-scroll">
 
         <article class="feature-card">
-          <img src="img/nun.jpg" alt="งานแต่ง'">
-          <div class="feature-dots"></div>
+          <img src="img/nun.jpg" alt="งานแต่ง'" width="3625" height="3625" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/w2.jpg" alt="งานแต่ง">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/w2.jpg" alt="งานแต่ง" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/w4.jpg" alt="งานแต่ง">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/w4.jpg" alt="งานแต่ง" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/w3.jpg" alt="งานแต่ง">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/w3.jpg" alt="งานแต่ง" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/OPL_3476.jpg" alt="งานแต่ง">
-          <div class="feature-dots"></div>
+          <img src="img/OPL_3476.jpg" alt="งานแต่ง" width="1898" height="2531" decoding="async" loading="lazy">
+
         </article>
 
       </div>
@@ -145,114 +146,114 @@
       <div class="highlight-scroll">
 
         <article class="feature-card">
-          <img src="img/mawork/b12.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b12.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b11.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b11.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b10.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b10.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b9.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b9.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b8.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b8.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
 
         <article class="feature-card">
-          <img src="img/mawork/b7.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b7.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b2.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b2.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b3.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b3.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b4.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b4.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b5.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b5.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b6.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b6.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b1.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b1.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b13.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b13.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/b14.jpg" alt="งานบวช">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/b14.jpg" alt="งานบวช" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
       </div>
     </div>
 
 
-    
+
     <div class="highlight-group">
       <h2>งานรับปริญญา</h2>
       <div class="highlight-scroll">
 
         <article class="feature-card">
-          <img src="img/mawork/c1.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c1.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/c2.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c2.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/c3.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c3.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/c4.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c4.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/c5.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c5.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/c6.jpg" alt="งานรับปริญญา">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/c6.jpg" alt="งานรับปริญญา" width="1920" height="1920" decoding="async" loading="lazy">
 
+        </article>
     </div>
     </div>
 
@@ -261,38 +262,38 @@
       <div class="highlight-scroll">
 
         <article class="feature-card">
-          <img src="img/mawork/a4.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/a4.jpg" alt="ผลงานอื่นๆ" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/a1.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/a1.jpg" alt="ผลงานอื่นๆ" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/wang.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/wang.jpg" alt="ผลงานอื่นๆ" width="1080" height="1350" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mama.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/mama.jpg" alt="ผลงานอื่นๆ" width="1080" height="1080" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/a3.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/a3.jpg" alt="ผลงานอื่นๆ" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/mawork/a2.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/mawork/a2.jpg" alt="ผลงานอื่นๆ" width="1920" height="1920" decoding="async" loading="lazy">
+
         </article>
 
         <article class="feature-card">
-          <img src="img/ava.jpg" alt="ผลงานอื่นๆ">
-          <div class="feature-dots"></div>
+          <img src="img/ava.jpg" alt="ผลงานอื่นๆ" width="1080" height="1080" decoding="async" loading="lazy">
+
         </article>
 
       </div>
@@ -302,7 +303,7 @@
 
   <section class="about" id="about">
     <div class="about-media">
-      <img src="img/profile .jpg" alt="ภาพถ่ายอาณัฐกำลังถือกล้องอยู่ในป่า">
+      <img src="img/profile .jpg" alt="ภาพถ่ายอาณัฐกำลังถือกล้องอยู่ในป่า" width="767" height="1152" decoding="async" loading="lazy">
     </div>
     <div class="about-copy">
       <h2>เกี่ยวกับผม</h2>
@@ -323,12 +324,10 @@
     <h2>ติดต่องาน</h2>
     <p>สนใจให้ถ่ายภาพ หรืออยากคุยเรื่องงานก่อน ทักมาได้เลย ปกติตอบกลับภายในหนึ่งวัน</p>
     <div class="contact-links">
-    <a href="https://line.me/ti/p/WZCiRq_e5s" class="hero-link hero-link--line" target="_blank" rel="noopener">
-          <i class="fa-brands fa-line" aria-hidden="true"></i>
+    <a href="https://line.me/ti/p/WZCiRq_e5s" class="hero-link hero-link--line" target="_blank" rel="noopener noreferrer">
           <span>ติดต่อผ่าน Line</span>
         </a>
-        <a href="https://www.facebook.com/share/19P5ANLh8d/" class="hero-link hero-link--facebook" target="_blank" rel="noopener">
-          <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+        <a href="https://www.facebook.com/share/19P5ANLh8d/" class="hero-link hero-link--facebook" target="_blank" rel="noopener noreferrer">
           <span>Facebook</span>
         </a>
     </div>
@@ -337,21 +336,23 @@
 </main>
 
 <footer class="site-footer">
-  <p>© <span id="year"></span> อาณัฐ ชื่นอารมณ์</p>
+  <p class="view-counter" aria-live="polite"><span>ยอดเข้าชม</span> <span id="view-count">—</span> <span>ครั้ง</span></p>
+  <p>© <span id="year">2026</span> อาณัฐ ชื่นอารมณ์</p>
 </footer>
 
 <button class="back-to-top" id="back-to-top" aria-label="กลับขึ้นบน">
-  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  <span aria-hidden="true">↑</span>
 </button>
 
-<div class="lightbox" id="lightbox">
+<dialog class="lightbox" id="lightbox" aria-label="ชมภาพผลงาน" aria-describedby="lightbox-caption">
   <button class="lightbox-close" id="lightbox-close" aria-label="ปิด">✕</button>
   <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="ภาพก่อนหน้า">‹</button>
-  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <img class="lightbox-img" id="lightbox-img" alt="">
   <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="ภาพถัดไป">›</button>
-  <p class="lightbox-caption" id="lightbox-caption"></p>
-</div>
+  <p class="lightbox-caption" id="lightbox-caption" aria-live="polite"></p>
+</dialog>
 
-<script src="script.js"></script>
+<script src="script.js?v=20261008-original-slider"></script>
+<script src="view-counter.js?v=20261008-1" defer></script>
 </body>
 </html>
