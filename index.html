@@ -29,9 +29,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261008-original-slider">
+<link rel="stylesheet" href="style.css?v=20261008-editorial">
 </head>
 <body>
+<progress class="reading-progress" id="reading-progress" max="100" value="0" aria-hidden="true"></progress>
 <a class="skip-link" href="#main">ข้ามไปยังเนื้อหา</a>
 
 <header class="site-header" id="top">
@@ -63,6 +64,7 @@
         <img src="img/watermark/Stupid 01.png" alt="ลายเซ็นอาณัฐ ชื่นอารมณ์ 3" class="hero-signature" width="672" height="504" decoding="async">
       </div>
     </div>
+    <div class="hero-scroll-note" aria-hidden="true"><span>SCROLL TO EXPLORE</span><span class="scroll-line"></span></div>
   </section>
 
   <section class="works" id="works">
@@ -108,6 +110,7 @@
   </section>
 
   <section class="highlights" id="highlights">
+    <div class="collection-intro"><p class="eyebrow">THE COLLECTIONS · 02</p><h2>ความทรงจำ ในแต่ละบท</h2><p>ผู้คน บรรยากาศ และช่วงเวลาที่อยากเก็บไว้</p></div>
 
     <div class="highlight-group">
       <h2>งานแต่ง</h2>
@@ -306,6 +309,7 @@
       <img src="img/profile .jpg" alt="ภาพถ่ายอาณัฐกำลังถือกล้องอยู่ในป่า" width="767" height="1152" decoding="async" loading="lazy">
     </div>
     <div class="about-copy">
+      <p class="eyebrow">BEHIND THE LENS · 03</p>
       <h2>เกี่ยวกับผม</h2>
       <p>สวัสดีครับ ผมเริ่มถ่ายภาพมาตั้งแต่อายุ 18 จากกล้องตัวเล็กๆ ของพี่สาว จนกลายมาเป็นความชอบและทำมาตลอด 6 ปี สิ่งที่ผมให้ความสำคัญที่สุดคือ "อารมณ์และบรรยากาศที่เป็นธรรมชาติ" ในภาพ ไม่ว่าจะเป็นงาน Portrait ภาพทิวทัศน์ หรือบันทึกความทรงจำในวันพิเศษ</p>
 
@@ -321,6 +325,7 @@
   </section>
 
   <section class="contact" id="contact">
+    <p class="eyebrow">LET’S MAKE MEMORIES · 04</p>
     <h2>ติดต่องาน</h2>
     <p>สนใจให้ถ่ายภาพ หรืออยากคุยเรื่องงานก่อน ทักมาได้เลย ปกติตอบกลับภายในหนึ่งวัน</p>
     <div class="contact-links">
@@ -354,5 +359,6 @@
 
 <script src="script.js?v=20261008-original-slider"></script>
 <script src="view-counter.js?v=20261008-1" defer></script>
+<script src="enhancements.js?v=20261008-1" defer></script>
 </body>
 </html>

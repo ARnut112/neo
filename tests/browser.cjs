@@ -73,6 +73,12 @@ const server = http.createServer((req, res) => {
     await page.screenshot({ path: path.join(root, 'tests', 'desktop.png') });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: path.join(root, 'tests', 'mobile.png') });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.locator('.works-head').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: path.join(root, 'tests', 'works.png') });
+    await page.locator('.about').scrollIntoViewIfNeeded();
+    await page.locator('.about-media img').evaluate(img => img.decode());
+    await page.screenshot({ path: path.join(root, 'tests', 'about.png') });
     assert.equal(viewRequests, 1, 'gallery interactions never increment');
     await page.reload();
     await page.waitForFunction(() => document.getElementById('view-count').textContent === '2');
