@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261009-comments">
+<link rel="stylesheet" href="style.css?v=20261009-comments-2">
 </head>
 <body>
 <progress class="reading-progress" id="reading-progress" max="100" value="0" aria-hidden="true"></progress>
@@ -327,28 +327,29 @@
   <section class="comments" id="comments" aria-labelledby="comments-title">
     <div class="comments-heading">
       <p class="eyebrow">LITTLE NOTES · 04</p>
-      <h2 id="comments-title">เสียงจากผู้ชม</h2>
+      <h2 id="comments-title">คอมเม้นต์จากผู้ชม</h2>
       <p>ความรู้สึกเล็ก ๆ ที่ฝากไว้ หลังได้ชมภาพของผม</p>
     </div>
-    <div class="comment-stage" id="comment-stage" role="region" aria-label="ข้อความจากผู้ชม" aria-roledescription="สไลด์ข้อความ">
-      <article class="comment-bubble" id="comment-bubble" hidden>
+    <div class="comment-stage" id="comment-stage" role="region" aria-label="ข้อความจากผู้ชม เลื่อนซ้ายหรือขวาเพื่ออ่าน" tabindex="0">
+      <template id="comment-template"><article class="comment-bubble">
         <span class="comment-quote" aria-hidden="true">“</span>
-        <p id="comment-message"></p>
-        <div class="comment-author"><span class="comment-avatar" id="comment-avatar" aria-hidden="true"></span><div><strong id="comment-name"></strong><span>ผู้ชมเว็บไซต์</span></div></div>
-      </article>
+        <p class="comment-message"></p>
+        <div class="comment-author"><span class="comment-avatar" aria-hidden="true"></span><div><strong class="comment-name"></strong><span>ผู้ชมเว็บไซต์</span></div></div>
+      </article></template>
       <p class="comment-empty" id="comment-empty">กำลังโหลดข้อความ…</p>
     </div>
     <div class="comment-controls" id="comment-controls" hidden>
       <button type="button" id="comment-prev" aria-label="ข้อความก่อนหน้า">←</button>
-      <span id="comment-position"></span>
+      <span id="comment-position" aria-live="polite"></span>
       <button type="button" id="comment-next" aria-label="ข้อความถัดไป">→</button>
-      <button type="button" id="comment-pause" aria-pressed="false">พักการเลื่อน</button>
+      <span class="comment-hint">ปัดซ้าย–ขวา หรือกดลูกศรเพื่ออ่าน</span>
     </div>
     <details class="comment-compose" id="comment-compose">
-      <summary>ฝากข้อความถึงช่างภาพ <span aria-hidden="true">＋</span></summary>
+      <summary>เขียนคอมเมนต์ <span aria-hidden="true">＋</span></summary>
       <div class="comment-compose-body">
         <p>ข้อความจะปรากฏหลังผ่านการตรวจสอบ กรุณาไม่ใส่เบอร์โทร อีเมล หรือข้อมูลส่วนตัวในข้อความ</p>
-        <button type="button" class="comment-primary" id="comment-login" disabled>เข้าสู่ระบบด้วย Google</button>
+        <p id="comment-login-reason">เข้าสู่ระบบด้วย Google เพื่อใช้ชื่อและรูปโปรไฟล์แสดงคู่กับคอมเมนต์ของคุณ โดยจะไม่แสดงอีเมลบนเว็บไซต์ อ่านคอมเมนต์ได้โดยไม่ต้องเข้าสู่ระบบครับ</p>
+        <button type="button" class="comment-primary" id="comment-login" aria-describedby="comment-login-reason" disabled>เข้าสู่ระบบด้วย Google เพื่อเขียนคอมเมนต์</button>
         <p class="comment-identity" id="comment-identity" hidden></p>
         <form id="comment-form" hidden>
           <label for="comment-input">ข้อความของคุณ</label>
@@ -415,6 +416,6 @@
 <script src="view-counter.js?v=20261008-1" defer></script>
 <script src="enhancements.js?v=20261008-1" defer></script>
 <script src="quick-contact.js?v=20261009-1" defer></script>
-<script src="comments.js?v=20261009-1" defer></script>
+<script src="comments.js?v=20261009-2" defer></script>
 </body>
 </html>

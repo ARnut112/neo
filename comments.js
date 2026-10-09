@@ -5,7 +5,6 @@
   if (!section) return;
   const el = id => document.getElementById(id);
   const stage = el('comment-stage');
-  const bubble = el('comment-bubble');
   const empty = el('comment-empty');
   const feedback = el('comment-feedback');
   const form = el('comment-form');
@@ -14,11 +13,7 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let comments = [];
   let index = 0;
-  let paused = false;
-  let hovered = false;
-  let visible = !('IntersectionObserver' in window);
-  let timer;
-  let animation;
+  let cards = [];
 
   async function api(path, payload) {
     const response = await fetch(path, {
@@ -35,68 +30,65 @@
     }
     return data;
   }
-  function render(animate = false) {
-    const item = comments[index];
-    if (!item) return;
-    el('comment-message').textContent = item.message;
-    el('comment-name').textContent = item.name;
-    const avatar = el('comment-avatar');
-    avatar.replaceChildren();
-    avatar.textContent = Array.from(item.name || 'ผู้ชม')[0];
-    try {
-      const url = new URL(item.avatar);
-      if (url.protocol === 'https:' && url.hostname.endsWith('.googleusercontent.com')) {
-        const image = document.createElement('img');
-        image.alt = '';
-        image.referrerPolicy = 'no-referrer';
-        image.addEventListener('error', () => image.remove(), { once: true });
-        image.src = url.href;
-        avatar.append(image);
-      }
-    } catch { /* Keep the initial when no profile image is available. */ }
-    el('comment-position').textContent = `${index + 1} / ${comments.length}`;
-    animation?.cancel();
-    if (animate && !motion.matches && bubble.animate) {
-      animation = bubble.animate([{ opacity: .15, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 420, easing: 'ease-out' });
-    }
-  }
-  function sync() {
-    clearInterval(timer);
-    if (comments.length < 2 || paused || hovered || !visible || document.hidden || motion.matches || section.contains(document.activeElement) || el('comment-compose').open) return;
-    timer = setInterval(() => { index = (index + 1) % comments.length; render(true); }, 7000);
+  function updatePosition() {
+    if (!cards.length) return;
+    const left = stage.getBoundingClientRect().left;
+    index = cards.reduce((nearest, card, i) =>
+      Math.abs(card.getBoundingClientRect().left - left) < Math.abs(cards[nearest].getBoundingClientRect().left - left) ? i : nearest, 0);
+    el('comment-position').textContent = `${index + 1} / ${cards.length}`;
+    el('comment-prev').disabled = index === 0;
+    el('comment-next').disabled = index === cards.length - 1;
   }
   function step(direction) {
-    index = (index + direction + comments.length) % comments.length;
-    render(true);
-    sync();
+    if (!cards.length) return;
+    index = Math.max(0, Math.min(cards.length - 1, index + direction));
+    stage.scrollTo({ left: cards[index].offsetLeft - cards[0].offsetLeft, behavior: motion.matches ? 'instant' : 'smooth' });
   }
   el('comment-prev').addEventListener('click', () => step(-1));
   el('comment-next').addEventListener('click', () => step(1));
-  el('comment-pause').addEventListener('click', () => {
-    paused = !paused;
-    el('comment-pause').textContent = paused ? 'เล่นต่อ' : 'พักการเลื่อน';
-    el('comment-pause').setAttribute('aria-pressed', String(paused));
-    sync();
+  stage.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    step(event.key === 'ArrowLeft' ? -1 : 1);
   });
-  stage.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovered = true; sync(); } });
-  stage.addEventListener('pointerleave', () => { hovered = false; sync(); });
-  document.addEventListener('focusin', sync);
-  document.addEventListener('visibilitychange', sync);
-  el('comment-compose').addEventListener('toggle', sync);
-  motion.addEventListener('change', () => { animation?.cancel(); sync(); });
-  if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { threshold: .2 }).observe(stage);
+  stage.addEventListener('scroll', updatePosition, { passive: true });
+  window.addEventListener('resize', updatePosition);
+  function render() {
+    cards = comments.map(item => {
+      const card = el('comment-template').content.firstElementChild.cloneNode(true);
+      card.querySelector('.comment-message').textContent = item.message;
+      card.querySelector('.comment-name').textContent = item.name;
+      const avatar = card.querySelector('.comment-avatar');
+      avatar.textContent = Array.from(item.name || 'ผู้ชม')[0];
+      try {
+        const url = new URL(item.avatar);
+        if (url.protocol === 'https:' && url.hostname.endsWith('.googleusercontent.com')) {
+          const image = document.createElement('img');
+          image.alt = '';
+          image.loading = 'lazy';
+          image.referrerPolicy = 'no-referrer';
+          image.addEventListener('error', () => image.remove(), { once: true });
+          image.src = url.href;
+          avatar.append(image);
+        }
+      } catch { /* Keep the initial when no profile image is available. */ }
+      stage.append(card);
+      return card;
+    });
+    stage.classList.toggle('comment-stage-single', cards.length === 1);
+    updatePosition();
+  }
   api('/api/comments').then(data => {
     comments = Array.isArray(data.comments) ? data.comments.filter(item => typeof item.name === 'string' && typeof item.message === 'string') : [];
     empty.hidden = comments.length > 0;
-    bubble.hidden = comments.length === 0;
     empty.textContent = 'ยังไม่มีข้อความที่เผยแพร่ ฝากความรู้สึกแรกไว้ให้ผมได้เลยครับ';
     el('comment-controls').hidden = comments.length < 2;
     render();
-    sync();
   }).catch(() => { empty.textContent = 'ยังโหลดข้อความไม่ได้ ลองกลับมาอ่านอีกครั้งได้ครับ'; });
 
   function session(person) {
     login.hidden = !!person;
+    el('comment-login-reason').hidden = !!person;
     form.hidden = !person;
     logout.hidden = !person;
     el('comment-identity').hidden = !person;
