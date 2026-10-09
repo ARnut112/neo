@@ -46,19 +46,16 @@ const server=http.createServer(async(req,res)=>{
   await page.mouse.move(0,0);
   await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='1 / 2');
   await page.screenshot({path:path.join(root,'tests','comments-desktop.png')});
-  await page.waitForTimeout(7500);
-  assert.equal(await page.locator('#comment-position').textContent(),'1 / 2','no automatic movement');
-  assert.equal(await page.locator('.comment-message img').count(),0,'no HTML injection');
+  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='2 / 2',null,{timeout:11000});
+  assert.equal(await page.locator('#comment-message img').count(),0,'no HTML injection');
   await page.locator('#comment-next').click();
-  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='2 / 2');
-  assert(await page.locator('#comment-next').isDisabled(),'stop at end');
+  assert.equal(await page.locator('#comment-position').textContent(),'1 / 2','wraparound');
   await page.locator('#comment-prev').click();
-  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='1 / 2');
-  await page.locator('#comment-stage').focus();
-  await page.keyboard.press('ArrowRight');
-  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='2 / 2');
-  await page.locator('#comment-stage').evaluate(e=>e.scrollTo({left:0,behavior:'instant'}));
-  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='1 / 2');
+  assert.equal(await page.locator('#comment-position').textContent(),'2 / 2');
+  await page.locator('#comment-pause').click();
+  await page.locator('.brand').evaluate(e=>e.focus({preventScroll:true}));
+  await page.waitForTimeout(7500);
+  assert.equal(await page.locator('#comment-position').textContent(),'2 / 2','pause stays paused without focus');
   await page.locator('#comment-compose summary').click();
   assert(await page.locator('#comment-login').isVisible());
   assert(await page.locator('#comment-login-reason').isVisible());
@@ -76,7 +73,7 @@ const server=http.createServer(async(req,res)=>{
   await page.waitForFunction(()=>document.querySelector('#comment-feedback').textContent.includes('กำลังรออนุมัติ'));
   assert.deepEqual(submissions[0],{message:'ข้อความที่รออนุมัติ',consent:true});
   assert.equal(await page.locator('#comment-input').inputValue(),'');
-  assert(!(await page.locator('.comment-message').first().textContent()).includes('ข้อความที่รออนุมัติ'));
+  assert(!(await page.locator('#comment-message').textContent()).includes('ข้อความที่รออนุมัติ'));
   submitStatus=503;
   await page.locator('#comment-input').fill('เก็บข้อความนี้หากส่งไม่สำเร็จ');
   await page.locator('#comment-consent').check();
@@ -90,8 +87,7 @@ const server=http.createServer(async(req,res)=>{
   }
   await page.setViewportSize({width:390,height:844});
   await page.locator('#comments').evaluate(e=>e.scrollIntoView({block:'start',behavior:'instant'}));
-  await page.locator('#comment-next').click();
-  await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='2 / 2');
+  await page.locator('#comment-prev').click();
   await page.locator('#comments').evaluate(e=>e.scrollIntoView({block:'start',behavior:'instant'}));
   await page.screenshot({path:path.join(root,'tests','comments-mobile.png')});
   await page.locator('#comment-logout').click();
@@ -100,9 +96,9 @@ const server=http.createServer(async(req,res)=>{
   await page.waitForFunction(()=>document.querySelector('#comment-empty').textContent.includes('ยังไม่มี'));
   assert(!(await page.locator('#comment-controls').isVisible()));
   list=[fixtures[0]];await page.reload();
-  await page.waitForFunction(()=>!!document.querySelector('.comment-bubble'));
+  await page.waitForFunction(()=>!document.querySelector('#comment-bubble').hidden);
   assert(!(await page.locator('#comment-controls').isVisible()));
   assert.deepEqual(errors,[]);
-  console.log('PASS: manual scrolling, keyboard navigation, no autoplay, boundary controls, text-only rendering, auth states, consent submission, pending not published, failure preserves text, logout, empty/single lists, 4 widths.');
+  console.log('PASS: autoplay, wrapping, pause, text-only rendering, auth states, consent submission, pending not published, failure preserves text, logout, empty/single lists, 4 widths.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>server.close());
