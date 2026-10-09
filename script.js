@@ -29,15 +29,28 @@ setMenu(false);
 document.documentElement.classList.add('js');
 
 const back = document.getElementById('back-to-top');
+const quickContact = document.getElementById('quick-contact');
+const worksSection = document.getElementById('works');
 let scrollPending = false;
 function updateScroll() {
   header.classList.toggle('is-scrolled', window.scrollY > 20);
-  back.classList.toggle('is-visible', window.scrollY > 320);
+  const showActions = worksSection.getBoundingClientRect().top <= header.getBoundingClientRect().bottom;
+  [back, quickContact].forEach(action => {
+    if (!action) return;
+    if (!showActions && action.contains(document.activeElement)) {
+      document.querySelector('.brand').focus({ preventScroll: true });
+    }
+    action.classList.toggle('is-visible', showActions);
+    action.inert = !showActions;
+  });
+  if (!showActions && quickContact) quickContact.open = false;
   scrollPending = false;
 }
 window.addEventListener('scroll', () => {
   if (!scrollPending) { scrollPending = true; requestAnimationFrame(updateScroll); }
 }, { passive: true });
+window.addEventListener('resize', updateScroll);
+window.addEventListener('load', updateScroll);
 updateScroll();
 back.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: behavior() });

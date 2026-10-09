@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261008-editorial">
+<link rel="stylesheet" href="style.css?v=20261009-playful-actions">
 </head>
 <body>
 <progress class="reading-progress" id="reading-progress" max="100" value="0" aria-hidden="true"></progress>
@@ -349,6 +349,20 @@
   <span aria-hidden="true">↑</span>
 </button>
 
+<details class="quick-contact" id="quick-contact">
+  <summary aria-label="ติดต่อช่างภาพด่วน" aria-controls="quick-contact-panel">
+    <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5a9 9 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5Z"/><path d="M8 11.5h.01M12.5 11.5h.01M17 11.5h.01"/></svg>
+  </summary>
+  <div class="quick-contact-panel" id="quick-contact-panel">
+    <p class="eyebrow">LET’S TALK</p>
+    <h2>คุยกับช่างภาพ</h2>
+    <p>สอบถามวันว่าง หรือเล่าไอเดียงานที่อยากถ่ายได้เลยครับ</p>
+    <a href="https://line.me/ti/p/WZCiRq_e5s" target="_blank" rel="noopener noreferrer">ติดต่อผ่าน Line <span aria-hidden="true">↗</span></a>
+    <a href="https://www.facebook.com/share/19P5ANLh8d/" target="_blank" rel="noopener noreferrer">Facebook <span aria-hidden="true">↗</span></a>
+    <small>เปิดแชตในแท็บใหม่</small>
+  </div>
+</details>
+
 <dialog class="lightbox" id="lightbox" aria-label="ชมภาพผลงาน" aria-describedby="lightbox-caption">
   <button class="lightbox-close" id="lightbox-close" aria-label="ปิด">✕</button>
   <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="ภาพก่อนหน้า">‹</button>
@@ -357,8 +371,9 @@
   <p class="lightbox-caption" id="lightbox-caption" aria-live="polite"></p>
 </dialog>
 
-<script src="script.js?v=20261008-original-slider"></script>
+<script src="script.js?v=20261009-floating-actions"></script>
 <script src="view-counter.js?v=20261008-1" defer></script>
 <script src="enhancements.js?v=20261008-1" defer></script>
+<script src="quick-contact.js?v=20261009-1" defer></script>
 </body>
 </html>
