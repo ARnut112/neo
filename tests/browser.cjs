@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
     await page.evaluate(() => window.scrollBy({top: 120, behavior: 'instant'}));
     await chat.locator('summary').click();
     assert(await chat.evaluate(e => e.open));
-    assert.equal(await chat.locator('a').count(), 2);
+    assert.equal(await chat.locator('a').count(), 3);
     await chat.locator('summary').focus();
     await page.keyboard.press('Tab');
     assert(await chat.locator('a').first().evaluate(e => e === document.activeElement));
