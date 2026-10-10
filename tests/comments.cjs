@@ -5,7 +5,7 @@ const authentication = require('../api/comment-auth');
 const helpers = require('../lib/comments-server');
 
 test('moderated comments and PKCE authentication', async () => {
-  const keys = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'COMMENTS_SITE_URL', 'VERCEL_ENV'];
+  const keys = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'COMMENTS_SITE_URL', 'VERCEL_ENV', 'VERCEL'];
   const saved = Object.fromEntries(keys.map(k => [k, process.env[k]]));
   const originalFetch = global.fetch;
   const person = { id: '11111111-1111-4111-8111-111111111111', email_confirmed_at: '2026-01-01', email: 'private@example.com', identities: [{ provider:'google', identity_data:{name:'Viewer', picture:'https://lh3.googleusercontent.com/test'} }] };
@@ -23,6 +23,7 @@ test('moderated comments and PKCE authentication', async () => {
     process.env.SUPABASE_SECRET_KEY='sb_secret_test';
     process.env.COMMENTS_SITE_URL='https://site.example';
     process.env.VERCEL_ENV='preview';
+    process.env.VERCEL='1';
     queue.push(new Response(JSON.stringify([{id:'1',display_name:'A',message:'Approved',avatar_url:'https://evil.example/x',created_at:'today'}])));
     let res=await call(comments,'GET');
     assert.equal(res.statusCode,200);
@@ -34,6 +35,25 @@ test('moderated comments and PKCE authentication', async () => {
     assert.equal((await call(comments,'POST',{message:'Hi',consent:true})).statusCode,400);
     assert.equal((await call(comments,'POST',{message:'Hello',consent:false})).statusCode,400);
     assert.equal((await call(comments,'POST',{message:'Hello',consent:true})).statusCode,401);
+    assert.equal((await call(comments,'POST',{message:'Hello',consent:true,mode:'other'})).statusCode,400);
+    const guestHeaders = {'x-vercel-forwarded-for':'192.0.2.10'};
+    assert.equal((await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'})).statusCode,503);
+    assert.equal((await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'},{'x-forwarded-for':'192.0.2.10'})).statusCode,503,'only trust Vercel header in deployment');
+    queue.push(new Response(null,{status:201}));
+    res=await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest',status:'approved',user_id:person.id,display_name:'forged',avatar_url:'https://lh3.googleusercontent.com/forged',guest_key:'forged'},guestHeaders);
+    assert.equal(res.statusCode,201);
+    const guest=JSON.parse(requests.at(-1).options.body);
+    assert.equal(guest.user_id,null); assert.equal(guest.avatar_url,null); assert.equal(guest.display_name,'ผู้ชมไม่ระบุตัวตน'); assert.equal(guest.status,'pending');
+    assert.match(guest.guest_key,/^[0-9a-f]{64}$/);
+    assert(!JSON.stringify(guest).includes('192.0.2.10'));
+    assert(!JSON.stringify(res.body).includes(guest.guest_key));
+    queue.push(new Response('{}',{status:409}));
+    res=await call(comments,'POST',{message:'Second guest review',consent:true,mode:'guest'},guestHeaders);
+    assert.equal(res.statusCode,429); assert.match(res.body.error,/เครือข่าย/);
+    assert.equal(JSON.parse(requests.at(-1).options.body).guest_key,guest.guest_key,'same daily limit across requests');
+    queue.push(new Response(null,{status:201}));
+    await call(comments,'POST',{message:'Other guest review',consent:true,mode:'guest'},{'x-vercel-forwarded-for':'192.0.2.11'});
+    assert.notEqual(JSON.parse(requests.at(-1).options.body).guest_key,guest.guest_key);
     queue.push(new Response(JSON.stringify(person)),new Response(null,{status:201}));
     res=await call(comments,'POST',{message:'Nice photos',consent:true,status:'approved',user_id:'forged',display_name:'forged'},{cookie:`${helpers.SESSION}=${token}`});
     assert.equal(res.statusCode,201);

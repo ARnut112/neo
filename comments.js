@@ -11,6 +11,44 @@
   const form = el('comment-form');
   const login = el('comment-login');
   const logout = el('comment-logout');
+  const dialog = el('comment-compose');
+  const opener = el('comment-open');
+  function openComposer() {
+    if (dialog.open) return;
+    if (!el('comment-success').hidden) feedback.textContent = '';
+    el('comment-success').hidden = true;
+    el('comment-editor').hidden = false;
+    el('comment-dialog-title').textContent = 'เขียนคอมเมนต์';
+    dialog.showModal();
+    dialog.scrollTop = 0;
+    document.documentElement.classList.add('comment-modal-open');
+    sync();
+  }
+  opener.addEventListener('click', openComposer);
+  el('comment-close').addEventListener('click', () => dialog.close());
+  el('comment-done').addEventListener('click', () => dialog.close());
+  function showThanks() {
+    el('comment-editor').hidden = true;
+    el('comment-success').hidden = false;
+    el('comment-dialog-title').textContent = 'ขอบคุณสำหรับรีวิวครับ';
+    dialog.scrollTop = 0;
+    if (dialog.open) el('comment-dialog-title').focus({ preventScroll: true });
+  }
+  dialog.addEventListener('close', () => {
+    document.documentElement.classList.remove('comment-modal-open');
+    opener.focus({ preventScroll: true });
+    sync();
+  });
+  let backdropDown = false;
+  function outside(event) {
+    const box = dialog.getBoundingClientRect();
+    return event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+  }
+  dialog.addEventListener('pointerdown', event => { backdropDown = event.target === dialog && outside(event); });
+  dialog.addEventListener('click', event => {
+    if (backdropDown && event.target === dialog && outside(event)) dialog.close();
+    backdropDown = false;
+  });
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   let comments = [];
   let index = 0;
@@ -19,6 +57,25 @@
   let visible = !('IntersectionObserver' in window);
   let timer;
   let animation;
+  let person = null;
+  let authReady = false;
+  let busy = false;
+  const draftKey = 'neo-comment-draft-v1';
+  function mode() { return el('comment-mode-guest').checked ? 'guest' : 'google'; }
+  function clearDraft() { try { sessionStorage.removeItem(draftKey); } catch { /* Storage may be disabled. */ } }
+  function saveDraft() {
+    try {
+      sessionStorage.setItem(draftKey, JSON.stringify({ message: el('comment-input').value, savedAt: Date.now() }));
+      return true;
+    } catch { return false; }
+  }
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(draftKey));
+    if (draft && typeof draft.message === 'string' && draft.message.length <= 400 && Number.isFinite(draft.savedAt) && Date.now() - draft.savedAt < 86400000 && Date.now() >= draft.savedAt) {
+      el('comment-input').value = draft.message;
+      el('comment-length').textContent = `${draft.message.length} / 400`;
+    } else clearDraft();
+  } catch { clearDraft(); }
 
   async function api(path, payload) {
     const response = await fetch(path, {
@@ -42,7 +99,7 @@
     el('comment-name').textContent = item.name;
     const avatar = el('comment-avatar');
     avatar.replaceChildren();
-    avatar.textContent = Array.from(item.name || 'ผู้ชม')[0];
+    avatar.textContent = item.name === 'ผู้ชมไม่ระบุตัวตน' && !item.avatar ? '◎' : Array.from(item.name || 'ผู้ชม')[0];
     try {
       const url = new URL(item.avatar);
       if (url.protocol === 'https:' && url.hostname.endsWith('.googleusercontent.com')) {
@@ -95,56 +152,89 @@
     sync();
   }).catch(() => { empty.textContent = 'ยังโหลดข้อความไม่ได้ ลองกลับมาอ่านอีกครั้งได้ครับ'; });
 
-  function session(person) {
-    login.hidden = !!person;
-    el('comment-login-reason').hidden = !!person;
-    form.hidden = !person;
-    logout.hidden = !person;
-    el('comment-identity').hidden = !person;
-    el('comment-identity').textContent = person ? `เขียนในชื่อ ${person.name}` : '';
+  function session(value) {
+    person = value;
+    updateMethod();
   }
-  api('/api/comment-auth').then(data => { session(data.user); login.disabled = false; }).catch(error => { feedback.textContent = error.message; });
-  login.addEventListener('click', async () => {
-    login.disabled = true;
+  function updateMethod() {
+    const google = mode() === 'google';
+    login.hidden = !google || !!person;
+    login.disabled = busy || !authReady;
+    el('comment-submit').hidden = google && !person;
+    el('comment-submit').disabled = busy;
+    el('comment-login-reason').hidden = !google;
+    el('comment-guest-note').hidden = google;
+    logout.hidden = !person;
+    el('comment-identity').hidden = !google || !person;
+    el('comment-identity').textContent = person && google ? `รีวิวในชื่อ ${person.name}` : '';
+    el('comment-consent-text').textContent = google ? 'ยินยอมให้เผยแพร่รีวิวพร้อมชื่อและรูปโปรไฟล์ Google หลังได้รับอนุมัติ' : 'ยินยอมให้เผยแพร่รีวิวในชื่อ “ผู้ชมไม่ระบุตัวตน” หลังได้รับอนุมัติ';
+    form.querySelectorAll('input[name="review-mode"]').forEach(input => { input.disabled = busy; });
+    logout.disabled = busy;
+  }
+  form.querySelectorAll('input[name="review-mode"]').forEach(input => input.addEventListener('change', () => {
+    el('comment-consent').checked = false;
+    feedback.textContent = '';
+    updateMethod();
+  }));
+  updateMethod();
+  api('/api/comment-auth').then(data => { session(data.user); }).catch(() => {
+    feedback.textContent = 'ตรวจสอบบัญชี Google ไม่ได้ในขณะนี้ คุณยังส่งรีวิวแบบนักท่องเที่ยวได้ครับ';
+  }).finally(() => { authReady = true; updateMethod(); });
+  async function startLogin() {
+    if (!saveDraft()) {
+      feedback.textContent = 'เบราว์เซอร์เก็บข้อความก่อนไปล็อกอินไม่ได้ กรุณาคัดลอกข้อความไว้ หรือเลือกโหมดนักท่องเที่ยว';
+      return;
+    }
+    busy = true;
+    updateMethod();
     feedback.textContent = 'กำลังพาไปเข้าสู่ระบบ…';
     try {
       const data = await api('/api/comment-auth', { action: 'login' });
       window.location.assign(data.url);
-    } catch (error) { feedback.textContent = error.message; login.disabled = false; }
-  });
+    } catch (error) { feedback.textContent = error.message; busy = false; updateMethod(); }
+  }
   logout.addEventListener('click', async () => {
-    logout.disabled = true;
+    if (busy) return;
+    busy = true;
+    updateMethod();
     try {
       await api('/api/comment-auth', { action: 'logout' });
-      form.reset();
-      el('comment-length').textContent = '0 / 400';
+      el('comment-consent').checked = false;
       session(null);
       feedback.textContent = 'ออกจากระบบแล้ว';
     } catch (error) { feedback.textContent = error.message; }
-    finally { logout.disabled = false; }
+    finally { busy = false; updateMethod(); }
   });
   el('comment-input').addEventListener('input', event => { el('comment-length').textContent = `${event.target.value.length} / 400`; });
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (!form.reportValidity()) return;
-    const submit = el('comment-submit');
-    submit.disabled = true;
+    if (busy) return;
+    if (mode() === 'google' && !person) {
+      if (authReady) await startLogin();
+      return;
+    }
+    busy = true;
+    const selectedMode = mode();
+    updateMethod();
     feedback.textContent = 'กำลังส่งข้อความ…';
     try {
-      await api('/api/comments', { message: el('comment-input').value, consent: el('comment-consent').checked });
+      await api('/api/comments', { message: el('comment-input').value, mode: selectedMode, consent: el('comment-consent').checked });
+      clearDraft();
       form.reset();
       el('comment-length').textContent = '0 / 400';
       feedback.textContent = 'ขอบคุณครับ ส่งแล้วและกำลังรออนุมัติ ข้อความยังไม่แสดงบนเว็บไซต์';
+      showThanks();
     } catch (error) {
       feedback.textContent = error.message;
-      if (error.status === 401) { session(null); login.disabled = false; }
-    } finally { submit.disabled = false; }
+      if (error.status === 401) { session(null); }
+    } finally { busy = false; updateMethod(); }
   });
   const url = new URL(location.href);
   if (url.searchParams.has('comment-login')) {
     feedback.textContent = 'เข้าสู่ระบบไม่สำเร็จหรือยกเลิก ลองกดเข้าสู่ระบบอีกครั้งได้ครับ';
-    el('comment-compose').open = true;
+    openComposer();
     url.searchParams.delete('comment-login');
     history.replaceState(null, '', url.pathname + url.search + url.hash);
-  } else if (location.hash === '#comments') el('comment-compose').open = true;
+  } else if (location.hash === '#comments') openComposer();
 })();

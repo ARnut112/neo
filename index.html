@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261009-comments-4">
+<link rel="stylesheet" href="style.css?v=20261010-review-thanks">
 </head>
 <body>
 <progress class="reading-progress" id="reading-progress" max="100" value="0" aria-hidden="true"></progress>
@@ -344,25 +344,45 @@
       <button type="button" id="comment-next" aria-label="ข้อความถัดไป">→</button>
       <button type="button" id="comment-pause" aria-pressed="false">พักการเลื่อน</button>
     </div>
-    <details class="comment-compose" id="comment-compose">
-      <summary>เขียนคอมเมนต์ <span aria-hidden="true">＋</span></summary>
+    <div class="comment-compose">
+      <button type="button" class="comment-open" id="comment-open" aria-haspopup="dialog" aria-controls="comment-compose">เขียนคอมเมนต์ <span aria-hidden="true">＋</span></button>
+    </div>
+    <dialog class="comment-dialog" id="comment-compose" aria-labelledby="comment-dialog-title">
       <div class="comment-compose-body">
+        <div class="comment-dialog-heading">
+          <h3 id="comment-dialog-title" tabindex="-1" autofocus>เขียนคอมเมนต์</h3>
+          <button type="button" id="comment-close" aria-label="ปิดหน้าต่างคอมเมนต์">×</button>
+        </div>
+        <div id="comment-editor">
         <p>ข้อความจะปรากฏหลังผ่านการตรวจสอบ กรุณาไม่ใส่เบอร์โทร อีเมล หรือข้อมูลส่วนตัวในข้อความ</p>
-        <p id="comment-login-reason">เข้าสู่ระบบด้วย Google เพื่อใช้ชื่อและรูปโปรไฟล์แสดงคู่กับคอมเมนต์ของคุณ โดยจะไม่แสดงอีเมลบนเว็บไซต์ อ่านคอมเมนต์ได้โดยไม่ต้องเข้าสู่ระบบครับ</p>
-        <button type="button" class="comment-primary" id="comment-login" aria-describedby="comment-login-reason" disabled>เข้าสู่ระบบด้วย Google เพื่อเขียนคอมเมนต์</button>
-        <p class="comment-identity" id="comment-identity" hidden></p>
-        <form id="comment-form" hidden>
+        <form id="comment-form">
           <label for="comment-input">ข้อความของคุณ</label>
           <textarea id="comment-input" name="message" rows="4" minlength="5" maxlength="400" required placeholder="ภาพไหนทำให้คุณยิ้ม หรืออยากฝากอะไรไว้…"></textarea>
           <span class="comment-length" id="comment-length">0 / 400</span>
-          <label class="comment-consent"><input type="checkbox" id="comment-consent" required> <span>ยินยอมให้แสดงชื่อและรูปโปรไฟล์ Google พร้อมข้อความบนเว็บไซต์หลังได้รับอนุมัติ โดยไม่แสดงอีเมล</span></label>
-          <button class="comment-primary" id="comment-submit" type="submit">ส่งข้อความเพื่อตรวจสอบ</button>
+          <fieldset class="comment-methods">
+            <legend>อยากฝากรีวิวในชื่อแบบไหน?</legend>
+            <label><input type="radio" name="review-mode" id="comment-mode-google" value="google" checked> <span><strong>ใช้บัญชี Google</strong><small>แสดงชื่อและรูปโปรไฟล์ของคุณ</small></span></label>
+            <label><input type="radio" name="review-mode" id="comment-mode-guest" value="guest"> <span><strong>โหมดนักท่องเที่ยว</strong><small>ไม่ต้องล็อกอิน แสดงเป็น “ผู้ชมไม่ระบุตัวตน”</small></span></label>
+          </fieldset>
+          <p class="comment-method-note" id="comment-login-reason">ถ้าอยากให้รีวิวมีชื่อและรูปของคุณ เลือกเข้าสู่ระบบด้วย Google ได้เลยครับ เราจะขอใช้ชื่อและรูปโปรไฟล์แสดงคู่กับรีวิว โดยไม่แสดงอีเมล หรือเลือกโหมดนักท่องเที่ยวได้ตามสะดวก</p>
+          <p class="comment-method-note" id="comment-guest-note" hidden>รีวิวจะแสดงเป็น “ผู้ชมไม่ระบุตัวตน” พร้อมไอคอนแทนรูปโปรไฟล์ โหมดนี้ส่งได้วันละ 1 รีวิวต่อเครือข่ายครับ</p>
+          <p class="comment-identity" id="comment-identity" hidden></p>
+          <label class="comment-consent"><input type="checkbox" id="comment-consent" required> <span id="comment-consent-text">ยินยอมให้เผยแพร่รีวิวพร้อมชื่อและรูปโปรไฟล์ Google หลังได้รับอนุมัติ</span></label>
+          <button type="submit" class="comment-primary" id="comment-login" aria-describedby="comment-login-reason" disabled>เข้าสู่ระบบ Google เพื่อส่งรีวิว</button>
+          <button class="comment-primary" id="comment-submit" type="submit" hidden>ส่งรีวิวเพื่อตรวจสอบ</button>
         </form>
         <button type="button" class="comment-logout" id="comment-logout" hidden>ออกจากระบบ</button>
         <p id="comment-feedback" role="status" aria-live="polite"></p>
         <noscript>เปิด JavaScript เพื่ออ่านหรือส่งข้อความ คุณยังติดต่อผ่าน Line และ Facebook ได้ตามปกติ</noscript>
+        </div>
+        <div class="comment-success" id="comment-success" hidden>
+          <span class="comment-success-icon" aria-hidden="true">✓</span>
+          <p>ได้รับรีวิวของคุณเรียบร้อยแล้วครับ</p>
+          <p>ขอบคุณที่สละเวลาฝากรีวิวให้ผมนะครับ ผมจะเข้ามาตรวจสอบ และรีวิวของคุณจะปรากฏบนเว็บไซต์หลังได้รับอนุมัติครับ</p>
+          <button type="button" class="comment-primary" id="comment-done">เรียบร้อย</button>
+        </div>
       </div>
-    </details>
+    </dialog>
   </section>
 
   <section class="contact" id="contact">
@@ -416,6 +436,6 @@
 <script src="view-counter.js?v=20261008-1" defer></script>
 <script src="enhancements.js?v=20261008-1" defer></script>
 <script src="quick-contact.js?v=20261009-1" defer></script>
-<script src="comments.js?v=20261009-3" defer></script>
+<script src="comments.js?v=20261010-review-thanks" defer></script>
 </body>
 </html>
