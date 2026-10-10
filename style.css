@@ -1006,6 +1006,9 @@ html.comment-modal-open { overflow: hidden; }
 .comment-methods small { display: block; margin-top: .2rem; color: var(--ink-muted); font-size: .78rem; }
 .comment-method-note, .comment-identity { font-size: .83rem; color: var(--ink-muted); line-height: 1.8; }
 #comment-input { display: block; width: 100%; margin-top: .6rem; padding: .8rem; border: 1px solid var(--line); border-radius: .6rem; resize: vertical; background: var(--bg); color: var(--ink); font: inherit; font-size: 1rem; }
+.comment-guest-name label { display: block; margin-top: 1rem; font-size: .9rem; }
+#comment-guest-name { width: 100%; margin-top: .5rem; padding: .75rem .8rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--bg); color: var(--ink); font: inherit; font-size: 1rem; }
+#comment-guest-name:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .comment-length { display: block; text-align: right; color: var(--ink-muted); font-size: .75rem; margin-top: .3rem; }
 #comment-form .comment-consent { display: flex; align-items: flex-start; gap: .6rem; font-size: .8rem; color: var(--ink-muted); margin: 1rem 0; }
 .comment-consent input { margin-top: .35rem; accent-color: var(--gold); }

@@ -200,5 +200,5 @@ if ('IntersectionObserver' in window) {
       });
     });
   }, { rootMargin: '-15% 0px -50% 0px' });
-  document.querySelectorAll('#hero, #works, #highlights, #about, #contact').forEach(section => observer.observe(section));
+  document.querySelectorAll('#hero, #works, #highlights, #about, #comments, #contact').forEach(section => observer.observe(section));
 }

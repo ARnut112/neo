@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 // Fixture comments are served only by this test, never shipped in the UI.
 const fixtures = [
  {id:'1',name:'ผู้ชมตัวอย่าง',avatar:null,message:'ชอบบรรยากาศในภาพมากครับ แต่ละภาพดูเป็นธรรมชาติ เหมือนได้กลับไปอยู่ในช่วงเวลานั้นอีกครั้ง'},
- {id:'2',name:'ข้อความทดสอบ',avatar:null,message:'<img src=x onerror=alert(1)> ข้อความนี้ต้องแสดงเป็นตัวอักษร ไม่ใช่ HTML'},
+ {id:'2',name:'<b>นักเดินทาง</b>',avatar:null,mode:'guest',message:'<img src=x onerror=alert(1)> ข้อความนี้ต้องแสดงเป็นตัวอักษร ไม่ใช่ HTML'},
 ];
 let signedIn=false;
 let loginSuccess=false;
@@ -54,6 +54,9 @@ const server=http.createServer(async(req,res)=>{
   await page.screenshot({path:path.join(root,'tests','comments-desktop.png')});
   await page.waitForFunction(()=>document.querySelector('#comment-position').textContent==='2 / 2',null,{timeout:11000});
   assert.equal(await page.locator('#comment-message img').count(),0,'no HTML injection');
+  assert.equal(await page.locator('#comment-name b').count(),0,'guest name is text only');
+  assert.equal(await page.locator('#comment-name').textContent(),'<b>นักเดินทาง</b>');
+  assert.equal(await page.locator('#comment-author-mode').textContent(),'ไม่ได้เข้าสู่ระบบ');
   await page.locator('#comment-next').click();
   assert.equal(await page.locator('#comment-position').textContent(),'1 / 2','wraparound');
   await page.locator('#comment-prev').click();
@@ -128,6 +131,8 @@ const server=http.createServer(async(req,res)=>{
   await page.waitForFunction(()=>!document.querySelector('#comment-login').hidden);
   assert.equal(await page.locator('#comment-input').inputValue(),'เก็บข้อความนี้หากส่งไม่สำเร็จ','logout keeps review');
   await page.locator('#comment-mode-guest').check();
+  assert(await page.locator('#comment-guest-name').isVisible());
+  await page.locator('#comment-guest-name').fill('นักเดินทาง');
   assert(await page.locator('#comment-login').isHidden());
   assert(!(await page.locator('#comment-consent').isChecked()),'mode change resets consent');
   await page.locator('#comment-consent').check();
@@ -135,6 +140,7 @@ const server=http.createServer(async(req,res)=>{
   await page.locator('#comment-submit').click();
   await page.waitForFunction(()=>document.querySelector('#comment-feedback').textContent.includes('กำลังรออนุมัติ'));
   assert.equal(submissions.at(-1).mode,'guest');
+  assert.equal(submissions.at(-1).guestName,'นักเดินทาง');
   assert(await page.locator('#comment-success').isVisible(),'guest shows same thank-you');
   authStatus=503;
   await page.reload();

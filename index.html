@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20261010-review-thanks">
+<link rel="stylesheet" href="style.css?v=20261010-guest-names">
 </head>
 <body>
 <progress class="reading-progress" id="reading-progress" max="100" value="0" aria-hidden="true"></progress>
@@ -40,6 +40,7 @@
   <nav class="main-nav" id="main-nav">
     <a href="#works">ผลงาน</a>
     <a href="#about">เกี่ยวกับ</a>
+    <a href="#comments">รีวิว</a>
     <a href="#contact">ติดต่อ</a>
   </nav>
   <button class="nav-toggle" id="nav-toggle" aria-label="เปิดเมนู" aria-expanded="false">
@@ -334,7 +335,7 @@
       <article class="comment-bubble" id="comment-bubble" hidden>
         <span class="comment-quote" aria-hidden="true">“</span>
         <p id="comment-message"></p>
-        <div class="comment-author"><span class="comment-avatar" id="comment-avatar" aria-hidden="true"></span><div><strong id="comment-name"></strong><span>ผู้ชมเว็บไซต์</span></div></div>
+        <div class="comment-author"><span class="comment-avatar" id="comment-avatar" aria-hidden="true"></span><div><strong id="comment-name"></strong><span id="comment-author-mode">ผู้ชมเว็บไซต์</span></div></div>
       </article>
       <p class="comment-empty" id="comment-empty">กำลังโหลดข้อความ…</p>
     </div>
@@ -362,10 +363,14 @@
           <fieldset class="comment-methods">
             <legend>อยากฝากรีวิวในชื่อแบบไหน?</legend>
             <label><input type="radio" name="review-mode" id="comment-mode-google" value="google" checked> <span><strong>ใช้บัญชี Google</strong><small>แสดงชื่อและรูปโปรไฟล์ของคุณ</small></span></label>
-            <label><input type="radio" name="review-mode" id="comment-mode-guest" value="guest"> <span><strong>โหมดนักท่องเที่ยว</strong><small>ไม่ต้องล็อกอิน แสดงเป็น “ผู้ชมไม่ระบุตัวตน”</small></span></label>
+            <label><input type="radio" name="review-mode" id="comment-mode-guest" value="guest"> <span><strong>โหมดนักท่องเที่ยว</strong><small>ไม่ต้องล็อกอิน ตั้งชื่อที่อยากใช้ได้</small></span></label>
           </fieldset>
           <p class="comment-method-note" id="comment-login-reason">ถ้าอยากให้รีวิวมีชื่อและรูปของคุณ เลือกเข้าสู่ระบบด้วย Google ได้เลยครับ เราจะขอใช้ชื่อและรูปโปรไฟล์แสดงคู่กับรีวิว โดยไม่แสดงอีเมล หรือเลือกโหมดนักท่องเที่ยวได้ตามสะดวก</p>
-          <p class="comment-method-note" id="comment-guest-note" hidden>รีวิวจะแสดงเป็น “ผู้ชมไม่ระบุตัวตน” พร้อมไอคอนแทนรูปโปรไฟล์ โหมดนี้ส่งได้วันละ 1 รีวิวต่อเครือข่ายครับ</p>
+          <div class="comment-guest-name" id="comment-guest-name-wrap" hidden>
+            <label for="comment-guest-name">ชื่อที่ใช้แสดง (ไม่บังคับ)</label>
+            <input type="text" id="comment-guest-name" name="guestName" maxlength="40" autocomplete="nickname" placeholder="เช่น นักเดินทาง" aria-describedby="comment-guest-note" disabled>
+          </div>
+          <p class="comment-method-note" id="comment-guest-note" hidden>ใต้ชื่อจะมีป้าย “ไม่ได้เข้าสู่ระบบ” ถ้าไม่กรอกชื่อจะแสดงเป็น “ผู้ชมไม่ระบุตัวตน” โหมดนี้ส่งได้วันละ 1 รีวิวต่อเครือข่ายครับ</p>
           <p class="comment-identity" id="comment-identity" hidden></p>
           <label class="comment-consent"><input type="checkbox" id="comment-consent" required> <span id="comment-consent-text">ยินยอมให้เผยแพร่รีวิวพร้อมชื่อและรูปโปรไฟล์ Google หลังได้รับอนุมัติ</span></label>
           <button type="submit" class="comment-primary" id="comment-login" aria-describedby="comment-login-reason" disabled>เข้าสู่ระบบ Google เพื่อส่งรีวิว</button>
@@ -432,10 +437,10 @@
   <p class="lightbox-caption" id="lightbox-caption" aria-live="polite"></p>
 </dialog>
 
-<script src="script.js?v=20261009-floating-actions"></script>
+<script src="script.js?v=20261010-review-nav"></script>
 <script src="view-counter.js?v=20261008-1" defer></script>
 <script src="enhancements.js?v=20261008-1" defer></script>
 <script src="quick-contact.js?v=20261009-1" defer></script>
-<script src="comments.js?v=20261010-review-thanks" defer></script>
+<script src="comments.js?v=20261010-guest-names" defer></script>
 </body>
 </html>

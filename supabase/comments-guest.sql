@@ -9,7 +9,7 @@ begin
     alter table public.comments add constraint comments_author_kind check (
       (user_id is not null and guest_key is null)
       or (user_id is null and guest_key is not null and guest_key ~ '^[0-9a-f]{64}$'
-          and display_name = 'ผู้ชมไม่ระบุตัวตน' and avatar_url is null)
+          and char_length(display_name) between 1 and 40 and avatar_url is null)
     );
   end if;
 end;
@@ -21,4 +21,13 @@ alter table public.comments enable row level security;
 revoke all on public.comments from public, anon, authenticated;
 revoke all on public.comments from service_role;
 grant select, insert on public.comments to service_role;
+-- Refresh the REST schema cache after adding guest_key.
+notify pgrst, 'reload schema';
 commit;
+
+-- After Success: user_id_nullable must be YES and guest_key_exists must be true.
+select
+  (select is_nullable from information_schema.columns
+   where table_schema = 'public' and table_name = 'comments' and column_name = 'user_id') as user_id_nullable,
+  exists (select 1 from information_schema.columns
+   where table_schema = 'public' and table_name = 'comments' and column_name = 'guest_key') as guest_key_exists;

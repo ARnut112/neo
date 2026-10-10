@@ -8,6 +8,9 @@ test('moderated comments and PKCE authentication', async () => {
   const keys = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'COMMENTS_SITE_URL', 'VERCEL_ENV', 'VERCEL'];
   const saved = Object.fromEntries(keys.map(k => [k, process.env[k]]));
   const originalFetch = global.fetch;
+  const originalConsoleError = console.error;
+  const logs = [];
+  console.error = (...args) => logs.push(args);
   const person = { id: '11111111-1111-4111-8111-111111111111', email_confirmed_at: '2026-01-01', email: 'private@example.com', identities: [{ provider:'google', identity_data:{name:'Viewer', picture:'https://lh3.googleusercontent.com/test'} }] };
   const token = 'test-token-abcdefghijklmnop';
   let requests = [];
@@ -24,19 +27,32 @@ test('moderated comments and PKCE authentication', async () => {
     process.env.COMMENTS_SITE_URL='https://site.example';
     process.env.VERCEL_ENV='preview';
     process.env.VERCEL='1';
-    queue.push(new Response(JSON.stringify([{id:'1',display_name:'A',message:'Approved',avatar_url:'https://evil.example/x',created_at:'today'}])));
+    queue.push(new Response(JSON.stringify([{id:'1',user_id:person.id,display_name:'A',message:'Approved',avatar_url:'https://evil.example/x',created_at:'today'}, {id:'2',user_id:null,display_name:'Traveler',message:'Guest approved',avatar_url:'https://lh3.googleusercontent.com/forged'}])));
     let res=await call(comments,'GET');
     assert.equal(res.statusCode,200);
     assert.equal(requests.at(-1).url.searchParams.get('status'),'eq.approved');
     assert.equal(requests.at(-1).url.searchParams.get('channel'),'eq.preview');
     assert.equal(res.body.comments[0].avatar,null);
-    assert(!requests.at(-1).url.searchParams.get('select').includes('user_id'));
+    assert.equal(res.body.comments[0].mode,'google');
+    assert.equal(res.body.comments[1].mode,'guest');
+    assert.equal(res.body.comments[1].avatar,null);
+    assert(!JSON.stringify(res.body).includes('user_id'));
+    assert(!JSON.stringify(res.body).includes(person.id));
     assert.equal((await call(comments,'POST',{message:'Hello',consent:true},{origin:'https://evil.example'})).statusCode,403);
     assert.equal((await call(comments,'POST',{message:'Hi',consent:true})).statusCode,400);
     assert.equal((await call(comments,'POST',{message:'Hello',consent:false})).statusCode,400);
     assert.equal((await call(comments,'POST',{message:'Hello',consent:true})).statusCode,401);
     assert.equal((await call(comments,'POST',{message:'Hello',consent:true,mode:'other'})).statusCode,400);
     const guestHeaders = {'x-vercel-forwarded-for':'192.0.2.10'};
+    for (const guestName of ['x'.repeat(41), 123, 'bad\u0000name', 'bad\u202ename']) {
+      assert.equal((await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest',guestName},guestHeaders)).statusCode,400);
+    }
+    queue.push(new Response(null,{status:201}));
+    res=await call(comments,'POST',{message:'Named guest review',consent:true,mode:'guest',guestName:'  Traveler  One  ',status:'approved',user_id:person.id},guestHeaders);
+    assert.equal(res.statusCode,201);
+    const named=JSON.parse(requests.at(-1).options.body);
+    assert.equal(named.display_name,'Traveler One');
+    assert.equal(named.user_id,null); assert.equal(named.avatar_url,null); assert.equal(named.status,'pending');
     assert.equal((await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'})).statusCode,503);
     assert.equal((await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'},{'x-forwarded-for':'192.0.2.10'})).statusCode,503,'only trust Vercel header in deployment');
     queue.push(new Response(null,{status:201}));
@@ -47,7 +63,7 @@ test('moderated comments and PKCE authentication', async () => {
     assert.match(guest.guest_key,/^[0-9a-f]{64}$/);
     assert(!JSON.stringify(guest).includes('192.0.2.10'));
     assert(!JSON.stringify(res.body).includes(guest.guest_key));
-    queue.push(new Response('{}',{status:409}));
+    queue.push(new Response(JSON.stringify({code:'23505'}),{status:409}));
     res=await call(comments,'POST',{message:'Second guest review',consent:true,mode:'guest'},guestHeaders);
     assert.equal(res.statusCode,429); assert.match(res.body.error,/เครือข่าย/);
     assert.equal(JSON.parse(requests.at(-1).options.body).guest_key,guest.guest_key,'same daily limit across requests');
@@ -55,14 +71,26 @@ test('moderated comments and PKCE authentication', async () => {
     await call(comments,'POST',{message:'Other guest review',consent:true,mode:'guest'},{'x-vercel-forwarded-for':'192.0.2.11'});
     assert.notEqual(JSON.parse(requests.at(-1).options.body).guest_key,guest.guest_key);
     queue.push(new Response(JSON.stringify(person)),new Response(null,{status:201}));
-    res=await call(comments,'POST',{message:'Nice photos',consent:true,status:'approved',user_id:'forged',display_name:'forged'},{cookie:`${helpers.SESSION}=${token}`});
+    res=await call(comments,'POST',{message:'Nice photos',consent:true,status:'approved',user_id:'forged',display_name:'forged',guestName:'Fake Google Name'},{cookie:`${helpers.SESSION}=${token}`});
     assert.equal(res.statusCode,201);
     const inserted=JSON.parse(requests.at(-1).options.body);
     assert.equal(inserted.status,'pending'); assert.equal(inserted.user_id,person.id); assert.equal(inserted.display_name,'Viewer');
     assert.equal(requests.at(-2).options.headers.Authorization,`Bearer ${token}`);
     assert.equal(requests.at(-1).options.headers.Authorization,undefined);
-    queue.push(new Response(JSON.stringify(person)),new Response('{}',{status:409}));
+    queue.push(new Response(JSON.stringify(person)),new Response(JSON.stringify({code:'23505'}),{status:409}));
     assert.equal((await call(comments,'POST',{message:'Again',consent:true},{cookie:`${helpers.SESSION}=${token}`})).statusCode,429);
+    for (const code of ['PGRST204','42703','23502','42501']) {
+      queue.push(new Response(JSON.stringify({code,message:'private database details',details:'private review body'}),{status:400}));
+      res=await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'},guestHeaders);
+      assert.equal(res.statusCode,503);
+      assert.equal(res.body.code,'COMMENT_STORAGE_SETUP_REQUIRED');
+      assert(!JSON.stringify(res.body).includes('private'));
+      assert(logs.some(entry=>entry[1].code===code && entry[1].operation==='insert_guest'));
+    }
+    queue.push(new Response(JSON.stringify({code:'23503'}),{status:409}));
+    res=await call(comments,'POST',{message:'Guest review',consent:true,mode:'guest'},guestHeaders);
+    assert.equal(res.statusCode,503,'foreign key failure must not claim daily quota reached');
+    assert(!JSON.stringify(logs).includes('private'));
     queue.push(new Response('{}',{status:401}));
     assert.equal((await call(comments,'POST',{message:'Again',consent:true},{cookie:`${helpers.SESSION}=${token}`})).statusCode,401);
     queue.push(new Response('{}',{status:500}));
@@ -94,6 +122,7 @@ test('moderated comments and PKCE authentication', async () => {
     assert.equal((await call(authentication,'POST',{action:'login'},{origin:'https://evil.example'})).statusCode,403);
   } finally {
     global.fetch=originalFetch;
+    console.error=originalConsoleError;
     keys.forEach(k=>{if(saved[k]===undefined) delete process.env[k]; else process.env[k]=saved[k];});
   }
 });

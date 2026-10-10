@@ -97,12 +97,14 @@
     if (!item) return;
     el('comment-message').textContent = item.message;
     el('comment-name').textContent = item.name;
+    const guest = item.mode === 'guest' || (!item.mode && item.name === 'ผู้ชมไม่ระบุตัวตน' && !item.avatar);
+    el('comment-author-mode').textContent = guest ? 'ไม่ได้เข้าสู่ระบบ' : 'ผู้ชมเว็บไซต์';
     const avatar = el('comment-avatar');
     avatar.replaceChildren();
-    avatar.textContent = item.name === 'ผู้ชมไม่ระบุตัวตน' && !item.avatar ? '◎' : Array.from(item.name || 'ผู้ชม')[0];
+    avatar.textContent = guest ? '◎' : Array.from(item.name || 'ผู้ชม')[0];
     try {
       const url = new URL(item.avatar);
-      if (url.protocol === 'https:' && url.hostname.endsWith('.googleusercontent.com')) {
+      if (!guest && url.protocol === 'https:' && url.hostname.endsWith('.googleusercontent.com')) {
         const image = document.createElement('img');
         image.alt = '';
         image.referrerPolicy = 'no-referrer';
@@ -164,10 +166,12 @@
     el('comment-submit').disabled = busy;
     el('comment-login-reason').hidden = !google;
     el('comment-guest-note').hidden = google;
+    el('comment-guest-name-wrap').hidden = google;
+    el('comment-guest-name').disabled = google || busy;
     logout.hidden = !person;
     el('comment-identity').hidden = !google || !person;
     el('comment-identity').textContent = person && google ? `รีวิวในชื่อ ${person.name}` : '';
-    el('comment-consent-text').textContent = google ? 'ยินยอมให้เผยแพร่รีวิวพร้อมชื่อและรูปโปรไฟล์ Google หลังได้รับอนุมัติ' : 'ยินยอมให้เผยแพร่รีวิวในชื่อ “ผู้ชมไม่ระบุตัวตน” หลังได้รับอนุมัติ';
+    el('comment-consent-text').textContent = google ? 'ยินยอมให้เผยแพร่รีวิวพร้อมชื่อและรูปโปรไฟล์ Google หลังได้รับอนุมัติ' : 'ยินยอมให้เผยแพร่รีวิวพร้อมชื่อที่เลือกและป้าย “ไม่ได้เข้าสู่ระบบ” หลังได้รับอนุมัติ';
     form.querySelectorAll('input[name="review-mode"]').forEach(input => { input.disabled = busy; });
     logout.disabled = busy;
   }
@@ -219,7 +223,7 @@
     updateMethod();
     feedback.textContent = 'กำลังส่งข้อความ…';
     try {
-      await api('/api/comments', { message: el('comment-input').value, mode: selectedMode, consent: el('comment-consent').checked });
+      await api('/api/comments', { message: el('comment-input').value, mode: selectedMode, consent: el('comment-consent').checked, ...(selectedMode === 'guest' ? { guestName: el('comment-guest-name').value } : {}) });
       clearDraft();
       form.reset();
       el('comment-length').textContent = '0 / 400';
