@@ -92,7 +92,7 @@ const server=http.createServer(async(req,res)=>{
     const home=await browser.newPage();
     await home.goto(url);
     await home.waitForFunction(()=>document.querySelectorAll('.highlight-loop-marker').length===2);
-    assert.equal(await home.locator('.brand').getAttribute('href'),'admin.html');
+    assert.equal(await home.locator('.brand').getAttribute('href'),'https://arnut.vercel.app/admin.html');
     assert.equal(await home.locator('.highlight-scroll').first().locator('img').count(),4,'original and newly uploaded photos share original loop');
     assert.equal(await home.locator('.highlight-scroll').first().locator('img[alt="<img src=x onerror=alert(1)>"]').count(),0,'hidden photo omitted');
     await card.getByRole('button',{name:'ลบภาพ',exact:true}).click();
