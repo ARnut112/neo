@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://*.googleusercontent.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#121110">
+  <title>จัดการรีวิว — Arnut Studio</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261015-portfolio">
+  <link rel="stylesheet" href="admin.css?v=20261015-moderation">
+  <script src="admin-comments.js?v=20261015-1" defer></script>
+</head>
+<body class="admin-page">
+  <a class="skip-link" href="#admin-main">ข้ามไปยังเนื้อหา</a>
+  <header class="admin-header">
+    <a class="brand" href="index.html">อาณัฐ<span class="brand-dot">.</span></a>
+    <span class="admin-wordmark">STUDIO / REVIEWS</span>
+    <a class="admin-site-link" href="index.html#comments" target="_blank" rel="noopener noreferrer">ดูรีวิวบนเว็บไซต์ ↗</a>
+  </header>
+  <nav class="admin-section-nav" aria-label="เมนูหลังบ้าน">
+    <a href="admin.html">คลังภาพ</a><a href="admin-comments.html" aria-current="page">จัดการรีวิว</a>
+  </nav>
+  <main class="admin-shell" id="admin-main">
+    <section class="admin-login-panel" id="admin-login-panel" aria-labelledby="admin-login-title">
+      <div class="admin-login-copy">
+        <p class="eyebrow">LITTLE NOTES, WELL KEPT</p>
+        <h1 id="admin-login-title">ดูแลทุกข้อความ<br>จากผู้ชมของคุณ</h1>
+        <p>อ่านความรู้สึกที่ผู้ชมฝากไว้ แล้วเลือกรีวิวที่จะเผยแพร่บนเว็บไซต์จากที่นี่</p>
+      </div>
+      <div class="admin-panel admin-login-card">
+        <span class="admin-lock" aria-hidden="true">↳</span><h2>เข้าสู่ระบบจัดการรีวิว</h2>
+        <p>ใช้บัญชีผู้ดูแลเดียวกับคลังภาพ หากเข้าสู่ระบบไว้แล้วจะเข้าหน้านี้ได้เลย</p>
+        <button type="button" class="admin-button admin-button-gold" id="admin-login" disabled>เข้าสู่ระบบด้วย Google</button>
+        <button type="button" class="admin-button admin-button-quiet" id="admin-check">ตรวจสอบสิทธิ์อีกครั้ง</button>
+        <p class="admin-status" id="admin-login-status" role="status" aria-live="polite">กำลังตรวจสอบการเข้าสู่ระบบ…</p>
+      </div>
+    </section>
+    <section id="admin-workspace" hidden aria-labelledby="admin-title">
+      <div class="admin-heading">
+        <div><p class="eyebrow">NOTES FROM YOUR VISITORS</p><h1 id="admin-title">จัดการรีวิว</h1><p class="admin-muted">ตรวจข้อความ แล้วเลือกสิ่งที่จะปรากฏบนหน้าเว็บไซต์</p></div>
+        <div class="admin-account"><span class="admin-environment" id="admin-environment"></span><span id="admin-user"></span><button type="button" class="admin-button admin-button-quiet" id="admin-logout">ออกจากระบบ</button></div>
+      </div>
+      <div class="admin-stats">
+        <div><strong id="review-count-pending">—</strong><span>รอตรวจสอบ</span></div>
+        <div><strong id="review-count-approved">—</strong><span>อนุมัติแล้ว</span></div>
+        <div><strong id="review-count-rejected">—</strong><span>ไม่เผยแพร่</span></div>
+      </div>
+      <div class="admin-toolbar">
+        <nav class="admin-filters" id="review-filters" aria-label="กรองสถานะรีวิว">
+          <button type="button" class="admin-button" data-status="pending" aria-pressed="true">รอตรวจสอบ</button>
+          <button type="button" class="admin-button" data-status="approved" aria-pressed="false">อนุมัติแล้ว</button>
+          <button type="button" class="admin-button" data-status="rejected" aria-pressed="false">ไม่เผยแพร่</button>
+          <button type="button" class="admin-button" data-status="all" aria-pressed="false">ทั้งหมด</button>
+        </nav>
+        <button type="button" class="admin-button" id="review-refresh">โหลดใหม่</button>
+      </div>
+      <p class="admin-help">รีวิวที่อนุมัติจะขึ้นบนหน้าเว็บไซต์เมื่อโหลดใหม่ เลือก “ไม่เผยแพร่” เพื่อนำออก หรือ “รอตรวจสอบ” เพื่อพักไว้โดยเก็บข้อความเดิม</p>
+      <p class="admin-status" id="review-status" tabindex="-1" role="status" aria-live="polite"></p>
+      <div class="admin-review-list" id="review-list" aria-busy="false"></div>
+      <p class="admin-empty" id="review-empty" hidden>ไม่มีรีวิวที่รอตรวจสอบในขณะนี้ครับ</p>
+      <nav class="admin-review-pagination" id="review-pagination" aria-label="หน้ารายการรีวิว" hidden>
+        <button type="button" class="admin-button" id="review-prev">← หน้าก่อน</button><span id="review-page"></span><button type="button" class="admin-button" id="review-next">หน้าถัดไป →</button>
+      </nav>
+    </section>
+  </main>
+  <footer class="admin-footer">ARNUT STUDIO <span>ทุกข้อความ มีความหมาย</span></footer>
+</body>
+</html>

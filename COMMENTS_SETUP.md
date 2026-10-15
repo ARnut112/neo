@@ -18,7 +18,7 @@ Supabase → SQL Editor → New query → รัน `supabase/comments.sql` ท�
 
 จากนั้นรัน `supabase/comments-guest.sql` เพื่อรองรับโหมดนักท่องเที่ยว หากมีตาราง comments อยู่แล้วให้รันเฉพาะ comments-guest.sql ก่อน Deploy โค้ดใหม่ ไฟล์นี้ไม่ลบข้อความเดิม และรันซ้ำได้ ไม่ต้องแก้ views.sql
 
-ตารางนี้แยกจากตัวนับวิว ไม่ต้องแก้หรือรัน views.sql ใหม่ ไม่มี anonymous RLS policy และ service_role ของ API มีเฉพาะอ่าน/เพิ่มข้อความ ไม่มีสิทธิ์อนุมัติ
+ตารางนี้แยกจากตัวนับวิว ไม่ต้องแก้หรือรัน views.sql ใหม่ ไม่มี anonymous RLS policy สคริปต์เริ่มต้นให้ service_role อ่าน/เพิ่มข้อความ ส่วน comments-moderation.sql เพิ่มสิทธิ์แก้เฉพาะ status สำหรับ API หลังบ้านที่ตรวจ UID ผู้ดูแลก่อนทุกครั้ง
 
 รีวิวนักท่องเที่ยวมี user_id เป็น null และมี guest_key สำหรับจำกัดการส่งซ้ำ ผู้ส่งเลือกชื่อได้ไม่เกิน 40 ตัวอักษร ถ้าเว้นว่างใช้ “ผู้ชมไม่ระบุตัวตน” API กำหนดรูปว่างและสถานะ pending เสมอ ชื่อที่ผู้ส่งตั้งเองไม่ทำให้ได้สถานะล็อกอิน ป้าย “ไม่ได้เข้าสู่ระบบ” อิง user_id ที่ฐานข้อมูลและ API ส่งออกเฉพาะ mode ไม่ส่ง user_id หรือ guest_key ต่อสาธารณะ
 
@@ -58,6 +58,8 @@ Vercel → โปรเจกต์ arnut → Environment Variables:
 เซสชันเป็น HttpOnly / Secure / SameSite=Lax cookie หมดอายุไม่เกิน 1 ชั่วโมง ไม่มี refresh token เก็บไว้ จึงอาจต้องกด Google login ใหม่เมื่อหมดอายุ โค้ดใช้ PKCE และไม่ส่ง secret/access token ให้ JavaScript ในหน้าเว็บ
 
 ## 4. อนุมัติข้อความ
+
+เมื่อเปิดหลังบ้านคลังภาพแล้ว สามารถจัดการสถานะผ่าน `/admin-comments.html` ได้ โดยรัน `supabase/comments-moderation.sql` ก่อน Deploy หนึ่งครั้ง ตามขั้นตอนใน PORTFOLIO_SETUP.md ใช้ UID ผู้ดูแลเดิมและไม่ต้องเข้า Table Editor เพื่ออนุมัติแต่ละข้อความ
 
 หากต้องการเลือกสถานะจากดรอปดาวน์ ให้รัน `supabase/comments-status-dropdown.sql` ใน SQL Editor แล้วรีเฟรช Table Editor ไฟล์นี้เปลี่ยน status จาก text เป็น enum โดยคงค่าเดิมไว้ API ยังส่ง pending และอ่าน approved ได้เหมือนเดิม ไม่ต้อง Deploy เว็บใหม่
 

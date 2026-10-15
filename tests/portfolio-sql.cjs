@@ -48,3 +48,27 @@ test('portfolio SQL preserves seed records and protects admin tables and storage
     await db.exec('reset role');
   } finally { await db.close(); }
 });
+
+test('moderation SQL grants only status updates and supports enum statuses', {skip: !PGlite && 'Optional @electric-sql/pglite dependency not installed'}, async () => {
+  const db = new PGlite();
+  try {
+    await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
+      create schema auth; create table auth.users(id uuid primary key);
+      insert into auth.users values('11111111-1111-4111-8111-111111111111');`);
+    const read = name=>fs.readFileSync(path.join(__dirname,'..','supabase',name),'utf8');
+    await db.exec(read('comments.sql'));
+    await db.exec(read('comments-status-dropdown.sql'));
+    await db.exec(read('comments-moderation.sql'));
+    await db.exec(read('comments-moderation.sql'));
+    await db.exec(`insert into comments(user_id,channel,display_name,message)
+      values('11111111-1111-4111-8111-111111111111','production','Viewer','Original review');
+      set role service_role;`);
+    const result=await db.query("update comments set status='approved' where channel='production' and status='pending' returning id,status");
+    assert.equal(result.rows[0].status,'approved');
+    await assert.rejects(db.query("update comments set message='Forged review'"),{code:'42501'});
+    await db.exec('reset role; set role anon');
+    await assert.rejects(db.query("update comments set status='approved'"),{code:'42501'});
+    await db.exec('reset role; set role authenticated');
+    await assert.rejects(db.query("update comments set status='approved'"),{code:'42501'});
+  } finally {await db.close();}
+});

@@ -92,13 +92,16 @@ test('portfolio access, upload lifecycle, moderation of visibility and admin OAu
     assert.equal((await call(management,'POST',{action:'delete',id:'../../forged'})).statusCode,400);
     assert.equal((await call(management,'POST',{action:'delete',id:'22222222-2222-4222-8222-222222222222'})).statusCode,404);
     let authResult = await call(login,'POST',{action:'login'});
-    const verifier = authResult.headers['Set-Cookie'].split(';')[0].split('=')[1];
+    const verifier = authResult.headers['Set-Cookie'].find(value=>value.startsWith(`${portfolio.PKCE}=`)).split(';')[0].split('=')[1];
     const authUrl = new URL(authResult.body.url);
     assert.equal(authUrl.searchParams.get('redirect_to'),'https://site.example/api/admin-auth');
     assert.equal(authUrl.searchParams.get('code_challenge'),require('node:crypto').createHash('sha256').update(verifier).digest('base64url'));
     authResult = await call(login,'GET',null,{cookie:`${portfolio.PKCE}=${verifier}`,url:'/api/admin-auth?code=valid'});
     assert.equal(authResult.statusCode,303); assert.equal(authResult.headers.Location,'https://site.example/admin.html');
     assert(authResult.headers['Set-Cookie'].some(value=>value.includes('HttpOnly; Secure; SameSite=Lax')&&value.includes(portfolio.SESSION)));
+    authResult = await call(login,'GET',null,{cookie:`${portfolio.PKCE}=${verifier}; ${portfolio.RETURN}=comments`,url:'/api/admin-auth?code=valid'});
+    assert.equal(authResult.headers.Location,'https://site.example/admin-comments.html');
+    assert.equal((await call(login,'POST',{action:'login',returnTo:'https://evil.example'})).statusCode,400);
     allowed=false;
     authResult = await call(login,'GET',null,{cookie:`${portfolio.PKCE}=${verifier}`,url:'/api/admin-auth?code=valid'});
     assert(authResult.headers.Location.endsWith('?login=denied'));

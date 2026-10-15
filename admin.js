@@ -1,7 +1,9 @@
 'use strict';
 (() => {
   const el = id => document.getElementById(id);
-  let photos = [], categories = [], activeCategory = 'all', busy = false, previews = [], deleting = null, loginNotice = false;
+  let photos = [], categories = [], activeCategory = 'all', busy = false, previews = [], deleting = null, editing = null, loginNotice = false;
+  const uploadDialog = el('admin-upload-dialog');
+  const editDialog = el('admin-edit-dialog');
   async function api(path, data) {
     const response = await fetch(path, { method: data ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(45000), ...(data ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) } : {}) });
     let result;
@@ -10,6 +12,7 @@
       const error = new Error(result.error || 'ทำรายการไม่สำเร็จ');
       error.status = response.status;
       if (response.status === 401) {
+        document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
         el('admin-workspace').hidden = true;
         el('admin-login-panel').hidden = false;
         el('admin-login-status').textContent = 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบผู้ดูแลอีกครั้ง';
@@ -20,7 +23,7 @@
   }
   function setBusy(value) {
     busy = value;
-    document.querySelectorAll('#admin-workspace button, #admin-upload-form input, #admin-upload-form select, #admin-photos input, #admin-photos select').forEach(control => { control.disabled = value; });
+    document.querySelectorAll('#admin-workspace button, #admin-upload-dialog button, #admin-upload-dialog input, #admin-upload-dialog select, #admin-edit-dialog button, #admin-edit-dialog input, #admin-edit-dialog select').forEach(control => { control.disabled = value; });
     if (!value) document.querySelectorAll('[data-incomplete="true"]').forEach(control => { control.disabled = true; });
   }
   function fillCategories(select, selected) {
@@ -33,15 +36,6 @@
     const rows = photos.filter(photo => photo.category === el('admin-category').value);
     el('admin-order').value = Math.min(100000, rows.length ? Math.max(...rows.map(photo => photo.sortOrder)) + 10 : 10);
   }
-  function field(form, text, type, value, name) {
-    const label = document.createElement('label');
-    const input = document.createElement(type === 'select' ? 'select' : 'input');
-    if (type !== 'select') input.type = type;
-    input.name = name;
-    if (type === 'select') fillCategories(input, value); else input.value = value;
-    label.textContent = text; label.append(input); form.append(label);
-    return input;
-  }
   function safeImage(url) {
     try { const parsed = new URL(url, location.origin); return parsed.origin === location.origin || parsed.protocol === 'https:' && parsed.hostname.endsWith('.supabase.co'); } catch { return false; }
   }
@@ -52,42 +46,86 @@
     const filtered = photos.filter(photo => (activeCategory === 'all' || photo.category === activeCategory) && photo.alt.toLocaleLowerCase().includes(query));
     el('admin-empty').hidden = filtered.length !== 0;
     el('admin-photos').replaceChildren();
-    filtered.forEach(photo => {
+    categories.forEach(category => {
+      const groupPhotos = filtered.filter(photo => photo.category === category.id);
+      if (!groupPhotos.length) return;
+      const group = document.createElement('section'); group.className = 'admin-photo-group'; group.dataset.category = category.id;
+      const heading = document.createElement('h2'); heading.className = 'admin-photo-group-title'; heading.textContent = category.name;
+      const count = document.createElement('span'); count.textContent = `${groupPhotos.length} ภาพ`; heading.append(count);
+      const grid = document.createElement('div'); grid.className = 'admin-photo-grid'; group.append(heading, grid);
+      groupPhotos.forEach(photo => {
       const card = document.createElement('article'); card.className = 'admin-photo-card'; card.dataset.id = photo.id;
-      const preview = document.createElement('div'); preview.className = 'admin-photo-preview';
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'admin-photo-select'; button.setAttribute('aria-label', `แก้ไขภาพ ${photo.alt}`); button.setAttribute('aria-haspopup', 'dialog');
+      const preview = document.createElement('span'); preview.className = 'admin-photo-preview';
       if (photo.ready && safeImage(photo.url)) {
-        const image = document.createElement('img'); image.src = photo.url; image.alt = photo.alt; image.loading = 'lazy'; image.width = photo.width; image.height = photo.height;
+        const image = document.createElement('img'); image.src = photo.url; image.alt = ''; image.loading = 'lazy'; image.width = photo.width; image.height = photo.height;
         image.addEventListener('error', () => { image.remove(); preview.prepend(document.createTextNode('โหลดภาพตัวอย่างไม่ได้')); }, { once: true }); preview.append(image);
       } else preview.textContent = 'อัปโหลดไม่ครบ';
-      const badge = document.createElement('span'); badge.className = 'admin-photo-badge'; badge.textContent = !photo.ready ? 'อัปโหลดไม่ครบ · ลบแล้วลองใหม่' : photo.published ? 'แสดงบนเว็บ' : 'ซ่อนจากเว็บ'; preview.append(badge);
-      const form = document.createElement('form');
-      const meta = document.createElement('span'); meta.className = 'admin-photo-meta'; meta.textContent = `${photo.width} × ${photo.height} · ${photo.source === 'original' ? 'ภาพเดิมในโปรเจกต์' : 'ภาพอัปโหลด'}`; form.append(meta);
-      const alt = field(form, 'คำอธิบายภาพ', 'text', photo.alt, 'alt'); alt.maxLength = 160; alt.required = true;
-      const category = field(form, 'หมวดงาน', 'select', photo.category, 'category');
-      const order = field(form, 'ลำดับ', 'number', photo.sortOrder, 'order'); order.min = 0; order.max = 100000; order.step = 1; order.required = true;
-      const label = document.createElement('label'); label.className = 'admin-checkbox';
-      const published = document.createElement('input'); published.type = 'checkbox'; published.checked = photo.published; published.disabled = !photo.ready; published.dataset.incomplete = String(!photo.ready); label.append(published, document.createTextNode(' แสดงบนเว็บไซต์')); form.append(label);
-      const actions = document.createElement('div'); actions.className = 'admin-photo-actions';
-      const save = document.createElement('button'); save.type = 'submit'; save.className = 'admin-button'; save.textContent = 'บันทึก';
-      const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'admin-button admin-button-danger'; remove.textContent = 'ลบภาพ'; actions.append(save, remove); form.append(actions);
-      const status = document.createElement('p'); status.className = 'admin-status'; status.setAttribute('role', 'status'); form.append(status);
-      form.addEventListener('submit', async event => {
-        event.preventDefault(); if (busy || !form.reportValidity()) return;
-        setBusy(true); status.textContent = 'กำลังบันทึก…';
-        try {
-          await api('/api/admin-photos', { action: 'update', id: photo.id, alt: alt.value, category: category.value, sortOrder: Number(order.value), published: published.checked });
-          await loadPhotos(); el('admin-list-status').textContent = 'บันทึกแล้ว หน้าเว็บไซต์จะแสดงข้อมูลใหม่เมื่อโหลดอีกครั้ง';
-        } catch (error) { status.textContent = error.message; }
-        finally { setBusy(false); }
+      const badge = document.createElement('span'); badge.className = 'admin-photo-badge'; badge.textContent = !photo.ready ? 'อัปโหลดไม่ครบ' : photo.published ? 'แสดงบนเว็บ' : 'ซ่อนจากเว็บ'; preview.append(badge);
+      const caption = document.createElement('span'); caption.className = 'admin-photo-caption';
+      const title = document.createElement('span'); title.className = 'admin-photo-title'; title.textContent = photo.alt;
+      const order = document.createElement('span'); order.className = 'admin-photo-order'; order.textContent = `ลำดับ ${photo.sortOrder}`; caption.append(title, order);
+      button.append(preview, caption); button.addEventListener('click', () => { if (!busy) openEdit(photo); });
+      card.append(button); grid.append(card);
       });
-      remove.addEventListener('click', () => {
-        deleting = photo;
-        el('admin-delete-description').textContent = photo.source === 'original' ? `“${photo.alt}” จะถูกนำออกจากสไลด์ ไฟล์ต้นฉบับในโปรเจกต์ยังอยู่` : `“${photo.alt}” จะถูกนำออกจากสไลด์และลบไฟล์ที่อัปโหลด การลบจะย้อนกลับไม่ได้`;
-        el('admin-delete-dialog').showModal();
-      });
-      card.append(preview, form); el('admin-photos').append(card);
+      el('admin-photos').append(group);
     });
   }
+  function openEdit(photo) {
+    editing = photo;
+    el('admin-edit-alt').value = photo.alt;
+    fillCategories(el('admin-edit-category'), photo.category);
+    el('admin-edit-order').value = photo.sortOrder;
+    el('admin-edit-published').checked = photo.published;
+    el('admin-edit-published').disabled = !photo.ready;
+    el('admin-edit-published').dataset.incomplete = String(!photo.ready);
+    el('admin-edit-meta').textContent = `${photo.width} × ${photo.height} · ${photo.source === 'original' ? 'ภาพเดิมในโปรเจกต์' : 'ภาพอัปโหลด'}${!photo.ready ? ' · อัปโหลดไม่ครบ กรุณาลบแล้วลองใหม่' : ''}`;
+    el('admin-edit-status').textContent = '';
+    const preview = el('admin-edit-preview'); preview.replaceChildren();
+    if (photo.ready && safeImage(photo.url)) {
+      const image = document.createElement('img'); image.src = photo.url; image.alt = photo.alt;
+      image.addEventListener('error', () => { image.remove(); preview.textContent = 'โหลดภาพตัวอย่างไม่ได้'; }, {once:true}); preview.append(image);
+    } else preview.textContent = 'อัปโหลดไม่ครบ';
+    editDialog.showModal(); editDialog.scrollTop = 0;
+  }
+  el('admin-add-photo').addEventListener('click', () => {
+    if (busy) return;
+    if (activeCategory !== 'all') el('admin-category').value = activeCategory;
+    defaultOrder(); el('admin-upload-status').textContent = '';
+    uploadDialog.showModal(); uploadDialog.scrollTop = 0;
+  });
+  [[uploadDialog, 'admin-upload-close'], [editDialog, 'admin-edit-close']].forEach(([dialog, closeId]) => {
+    el(closeId).addEventListener('click', () => { if (!busy) dialog.close(); });
+    dialog.addEventListener('cancel', event => { if (busy) event.preventDefault(); });
+  });
+  el('admin-edit-form').addEventListener('submit', async event => {
+    event.preventDefault(); if (busy || !editing || !event.target.reportValidity()) return;
+    const id = editing.id;
+    const data = { action: 'update', id, alt: el('admin-edit-alt').value, category: el('admin-edit-category').value, sortOrder: Number(el('admin-edit-order').value), published: el('admin-edit-published').checked };
+    setBusy(true); el('admin-edit-status').textContent = 'กำลังบันทึก…';
+    let saved = false;
+    try {
+      await api('/api/admin-photos', data); saved = true; editDialog.close();
+      if (activeCategory !== 'all') activeCategory = data.category;
+      await loadPhotos(); el('admin-list-status').textContent = 'บันทึกแล้ว หน้าเว็บไซต์จะแสดงข้อมูลใหม่เมื่อโหลดอีกครั้ง';
+    } catch (error) {
+      if (saved) el('admin-list-status').textContent = 'บันทึกแล้ว แต่โหลดรายการใหม่ไม่ได้ กรุณากดโหลดใหม่';
+      else el('admin-edit-status').textContent = error.message;
+    } finally {
+      setBusy(false);
+      if (saved) {
+        editing = null;
+        const card = Array.from(el('admin-photos').querySelectorAll('.admin-photo-card')).find(card => card.dataset.id === id);
+        (card?.querySelector('button') || el('admin-refresh')).focus({preventScroll:true});
+      }
+    }
+  });
+  el('admin-edit-delete').addEventListener('click', () => {
+    if (busy || !editing) return;
+    deleting = editing;
+    el('admin-delete-description').textContent = editing.source === 'original' ? `“${editing.alt}” จะถูกนำออกจากสไลด์ ไฟล์ต้นฉบับในโปรเจกต์ยังอยู่` : `“${editing.alt}” จะถูกนำออกจากสไลด์และลบไฟล์ที่อัปโหลด การลบจะย้อนกลับไม่ได้`;
+    el('admin-delete-dialog').showModal();
+  });
   async function loadPhotos() {
     const data = await api('/api/admin-photos');
     photos = data.photos; categories = data.categories;
@@ -95,7 +133,9 @@
     fillCategories(el('admin-category'), selected || categories[0].id);
     el('admin-filters').replaceChildren();
     [{ id: 'all', name: 'ทั้งหมด' }, ...categories].forEach(category => {
-      const button = document.createElement('button'); button.type = 'button'; button.className = 'admin-button'; button.textContent = category.name; button.setAttribute('aria-pressed', String(activeCategory === category.id));
+      const count = category.id === 'all' ? photos.length : photos.filter(photo => photo.category === category.id).length;
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'admin-button'; button.textContent = category.name; button.setAttribute('aria-label', category.name); button.setAttribute('aria-pressed', String(activeCategory === category.id));
+      const badge = document.createElement('span'); badge.className = 'admin-category-count'; badge.textContent = count; button.append(badge);
       button.addEventListener('click', () => {
         if (busy) return;
         activeCategory = category.id;
@@ -182,19 +222,26 @@
           uploaded++;
         } catch (error) { failures.push(`${files[i].name}: ${error.message}`); if (error.status === 401) break; }
       }
+      if (uploaded) { activeCategory = category; el('admin-search').value = ''; }
       try { await loadPhotos(); } catch (error) { failures.push(error.message); }
       el('admin-upload-status').textContent = `อัปโหลดสำเร็จ ${uploaded} / ${files.length} ภาพ${failures.length ? ` · ${failures.join(' · ')}` : published ? ' พร้อมแสดงในหมวดที่เลือกแล้ว' : ' เก็บไว้ในคลังโดยยังไม่แสดงบนเว็บ'}`;
-      if (!failures.length) { el('admin-files').value = ''; el('admin-alt').value = ''; clearPreviews(); }
-    } finally { setBusy(false); }
+      if (!failures.length) {
+        el('admin-files').value = ''; el('admin-alt').value = ''; clearPreviews();
+        el('admin-list-status').textContent = el('admin-upload-status').textContent; uploadDialog.close();
+      }
+    } finally { setBusy(false); if (!uploadDialog.open) el('admin-add-photo').focus({preventScroll:true}); }
   });
   const confirm = el('admin-delete-dialog');
   el('admin-delete-cancel').addEventListener('click', () => confirm.close());
   el('admin-delete-confirm').addEventListener('click', async () => {
     if (!deleting || busy) return;
     const photo = deleting; confirm.close(); setBusy(true);
-    try { await api('/api/admin-photos', { action: 'delete', id: photo.id }); await loadPhotos(); el('admin-list-status').textContent = 'ลบภาพแล้ว'; }
-    catch (error) { el('admin-list-status').textContent = error.message; }
-    finally { deleting = null; setBusy(false); el('admin-refresh').focus({ preventScroll: true }); }
+    try {
+      await api('/api/admin-photos', { action: 'delete', id: photo.id }); editDialog.close(); editing = null;
+      await loadPhotos(); el('admin-list-status').textContent = 'ลบภาพแล้ว';
+    }
+    catch (error) { (editDialog.open ? el('admin-edit-status') : el('admin-list-status')).textContent = error.message; }
+    finally { deleting = null; setBusy(false); if (!editDialog.open) el('admin-refresh').focus({ preventScroll: true }); }
   });
   const current = new URL(location.href);
   if (current.searchParams.has('login')) {

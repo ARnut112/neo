@@ -13,8 +13,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20261015-portfolio">
-  <link rel="stylesheet" href="admin.css?v=20261015-1">
-  <script src="admin.js?v=20261015-1" defer></script>
+  <link rel="stylesheet" href="admin.css?v=20261015-compact-library">
+  <script src="admin.js?v=20261015-compact-library" defer></script>
 </head>
 <body class="admin-page">
   <a class="skip-link" href="#admin-main">ข้ามไปยังเนื้อหา</a>
@@ -23,6 +23,10 @@
     <span class="admin-wordmark">STUDIO / COLLECTIONS</span>
     <a class="admin-site-link" href="index.html" target="_blank" rel="noopener noreferrer">ดูหน้าเว็บไซต์ ↗</a>
   </header>
+  <nav class="admin-section-nav" aria-label="เมนูหลังบ้าน">
+    <a href="admin.html" aria-current="page">คลังภาพ</a>
+    <a href="admin-comments.html">จัดการรีวิว</a>
+  </nav>
   <main class="admin-shell" id="admin-main">
     <section class="admin-login-panel" id="admin-login-panel" aria-labelledby="admin-login-title">
       <div class="admin-login-copy">
@@ -40,43 +44,51 @@
         <p class="admin-status" id="admin-login-status" role="status" aria-live="polite">กำลังตรวจสอบการเข้าสู่ระบบ…</p>
       </div>
     </section>
-    <section id="admin-workspace" hidden aria-labelledby="admin-title">
-      <div class="admin-heading">
-        <div><p class="eyebrow">YOUR COLLECTIONS</p><h1 id="admin-title">คลังภาพของคุณ</h1><p class="admin-muted">ภาพใหม่ เรื่องราวใหม่ จัดการได้จากที่เดียว</p></div>
+    <section class="admin-photo-workspace" id="admin-workspace" hidden aria-labelledby="admin-title">
+      <div class="admin-heading admin-heading-compact">
+        <div><h1 id="admin-title">คลังภาพ</h1><p class="admin-muted">เลือกหมวด แล้วกดภาพเพื่อแก้ไข</p></div>
         <div class="admin-account"><span class="admin-environment" id="admin-environment"></span><span id="admin-user"></span><button type="button" class="admin-button admin-button-quiet" id="admin-logout">ออกจากระบบ</button></div>
       </div>
-      <div class="admin-stats">
-        <div><strong id="admin-total">—</strong><span>ภาพในคลัง</span></div>
-        <div><strong id="admin-visible">—</strong><span>ภาพที่แสดงบนเว็บ</span></div>
-        <div><strong>04</strong><span>หมวดงาน</span></div>
-      </div>
-      <div class="admin-layout">
-        <aside class="admin-panel admin-upload-panel" aria-labelledby="admin-upload-title">
-          <p class="eyebrow">ADD A MOMENT</p><h2 id="admin-upload-title">เพิ่มภาพใหม่</h2>
-          <form id="admin-upload-form">
-            <label for="admin-category">หมวดงาน</label><select id="admin-category" required></select>
-            <label class="admin-file-label" for="admin-files"><span class="admin-file-icon" aria-hidden="true">＋</span><strong>เลือกภาพที่อยากโชว์</strong><span>JPEG, PNG หรือ WebP · สูงสุดครั้งละ 20 ภาพ</span><input id="admin-files" type="file" accept="image/jpeg,image/png,image/webp" multiple required></label>
-            <div class="admin-file-previews" id="admin-file-previews"></div>
-            <label for="admin-alt">คำอธิบายภาพ <span class="admin-muted">(ไม่บังคับ)</span></label><input id="admin-alt" type="text" maxlength="160" placeholder="เช่น รอยยิ้มในวันสำคัญ">
-            <label for="admin-order">ลำดับเริ่มต้น</label><input id="admin-order" type="number" min="0" max="100000" step="1" value="1000" required>
-            <label class="admin-checkbox"><input id="admin-publish" type="checkbox" checked> แสดงบนเว็บหลังอัปโหลด</label>
-            <button class="admin-button admin-button-gold" id="admin-upload" type="submit">อัปโหลดภาพ</button>
-            <p class="admin-help">ภาพจะย่อให้เหมาะกับเว็บโดยอัตโนมัติ และแสดงในหมวดที่เลือกเมื่อบันทึกสำเร็จ</p>
-          </form>
-          <p class="admin-status" id="admin-upload-status" role="status" aria-live="polite"></p>
-        </aside>
-        <div class="admin-collection">
-          <div class="admin-toolbar"><nav class="admin-filters" id="admin-filters" aria-label="กรองหมวดภาพ"></nav><button type="button" class="admin-button" id="admin-refresh">โหลดใหม่</button></div>
+      <div class="admin-collection">
+          <div class="admin-toolbar"><nav class="admin-filters" id="admin-filters" aria-label="กรองหมวดภาพ"></nav><div class="admin-library-actions"><button type="button" class="admin-button admin-button-quiet" id="admin-refresh">โหลดใหม่</button><button type="button" class="admin-button admin-button-gold" id="admin-add-photo" aria-haspopup="dialog" aria-controls="admin-upload-dialog">＋ เพิ่มภาพ</button></div></div>
+          <p class="admin-library-summary">ทั้งหมด <strong id="admin-total">—</strong> ภาพ · แสดงบนเว็บ <strong id="admin-visible">—</strong> ภาพ</p>
           <label class="admin-search-label" for="admin-search">ค้นหาในคลังภาพ</label><input type="search" id="admin-search" placeholder="ค้นหาจากคำอธิบายภาพ">
-          <p class="admin-help">เลขลำดับน้อยจะแสดงก่อน กดบันทึกหลังแก้ไขแต่ละภาพ ภาพที่ซ่อนยังอาจเปิดได้จากลิงก์ไฟล์เดิม</p>
           <p class="admin-status" id="admin-list-status" role="status" aria-live="polite"></p>
-          <div class="admin-photo-grid" id="admin-photos"></div>
+          <div class="admin-grouped-photos" id="admin-photos"></div>
           <p class="admin-empty" id="admin-empty" hidden>ยังไม่มีภาพในหมวดนี้ เริ่มด้วยภาพแรกของคุณได้เลย</p>
-        </div>
       </div>
     </section>
   </main>
   <footer class="admin-footer">ARNUT STUDIO <span>ภาพหนึ่งภาพ เรื่องราวหนึ่งบท</span></footer>
+  <dialog class="admin-modal admin-upload-modal" id="admin-upload-dialog" aria-labelledby="admin-upload-title">
+    <div class="admin-modal-heading"><h2 id="admin-upload-title" tabindex="-1" autofocus>เพิ่มภาพใหม่</h2><button type="button" class="admin-modal-close" id="admin-upload-close" aria-label="ปิดหน้าต่างอัปโหลด">×</button></div>
+    <form id="admin-upload-form">
+      <label for="admin-category">หมวดงาน</label><select id="admin-category" required></select>
+      <label class="admin-file-label" for="admin-files"><strong>เลือกภาพที่อยากโชว์</strong><span>JPEG, PNG หรือ WebP · สูงสุดครั้งละ 20 ภาพ</span><input id="admin-files" type="file" accept="image/jpeg,image/png,image/webp" multiple required></label>
+      <div class="admin-file-previews" id="admin-file-previews"></div>
+      <label for="admin-alt">คำอธิบายภาพ <span class="admin-muted">(ไม่บังคับ)</span></label><input id="admin-alt" type="text" maxlength="160" placeholder="เช่น รอยยิ้มในวันสำคัญ">
+      <label for="admin-order">ลำดับเริ่มต้น</label><input id="admin-order" type="number" min="0" max="100000" step="1" value="1000" required>
+      <label class="admin-checkbox"><input id="admin-publish" type="checkbox" checked> แสดงบนเว็บหลังอัปโหลด</label>
+      <button class="admin-button admin-button-gold" id="admin-upload" type="submit">อัปโหลดภาพ</button>
+      <p class="admin-help">ระบบย่อภาพให้เหมาะกับเว็บโดยอัตโนมัติ</p>
+    </form>
+    <p class="admin-status" id="admin-upload-status" role="status" aria-live="polite"></p>
+  </dialog>
+  <dialog class="admin-modal admin-edit-modal" id="admin-edit-dialog" aria-labelledby="admin-edit-title">
+    <div class="admin-modal-heading"><h2 id="admin-edit-title" tabindex="-1" autofocus>แก้ไขภาพ</h2><button type="button" class="admin-modal-close" id="admin-edit-close" aria-label="ปิดหน้าต่างแก้ไข">×</button></div>
+    <div class="admin-edit-layout">
+      <div><div class="admin-edit-preview" id="admin-edit-preview"></div><p class="admin-help" id="admin-edit-meta"></p></div>
+      <form id="admin-edit-form">
+        <label for="admin-edit-alt">คำอธิบายภาพ</label><input id="admin-edit-alt" name="alt" type="text" maxlength="160" required>
+        <label for="admin-edit-category">หมวดงาน</label><select id="admin-edit-category" name="category" required></select>
+        <label for="admin-edit-order">ลำดับ</label><input id="admin-edit-order" name="order" type="number" min="0" max="100000" step="1" required>
+        <label class="admin-checkbox"><input id="admin-edit-published" type="checkbox"> แสดงบนเว็บไซต์</label>
+        <p class="admin-help">ลำดับน้อยแสดงก่อน ภาพที่ซ่อนยังอาจเปิดได้จากลิงก์ไฟล์เดิม</p>
+        <div class="admin-photo-actions"><button type="button" class="admin-button admin-button-danger" id="admin-edit-delete">ลบภาพ</button><button type="submit" class="admin-button admin-button-gold" id="admin-edit-save">บันทึก</button></div>
+        <p class="admin-status" id="admin-edit-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </dialog>
   <dialog class="admin-confirm" id="admin-delete-dialog" aria-labelledby="admin-delete-title">
     <h2 id="admin-delete-title">ลบภาพนี้?</h2><p id="admin-delete-description"></p>
     <div class="admin-confirm-actions"><button type="button" class="admin-button" id="admin-delete-cancel" autofocus>เก็บภาพไว้</button><button type="button" class="admin-button admin-button-danger" id="admin-delete-confirm">ลบภาพ</button></div>
