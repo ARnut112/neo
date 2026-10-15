@@ -187,7 +187,34 @@ function setupHighlightAutoScroll(scroll) {
   observer.observe(scroll);
 }
 
-highlightScrolls.forEach(setupHighlightAutoScroll);
+async function loadHighlightCollections() {
+  try {
+    const response = await fetch('/api/portfolio', { cache: 'no-store', signal: AbortSignal.timeout(4000) });
+    if (!response.ok) throw new Error('Keep original photos');
+    const data = await response.json();
+    if (!Array.isArray(data.photos) || !Array.isArray(data.categories)) throw new Error('Invalid collection');
+    const knownCategories = ['wedding', 'ordination', 'graduation', 'other'];
+    // Prepare every rail before touching the page; failed requests retain the original draft.
+    const rails = knownCategories.map(category => {
+      const fragment = document.createDocumentFragment();
+      data.photos.filter(photo => photo.category === category).forEach(photo => {
+        const url = new URL(photo.url, location.origin);
+        if (url.origin !== location.origin && !(url.protocol === 'https:' && url.hostname.endsWith('.supabase.co'))) throw new Error('Invalid image URL');
+        if (typeof photo.alt !== 'string' || !Number.isInteger(photo.width) || !Number.isInteger(photo.height) || photo.width < 1 || photo.height < 1) throw new Error('Invalid image');
+        const card = document.createElement('article'); card.className = 'feature-card';
+        const image = document.createElement('img'); image.src = url.href; image.alt = photo.alt; image.width = photo.width; image.height = photo.height; image.decoding = 'async'; image.loading = 'lazy';
+        card.append(image); fragment.append(card);
+      });
+      return fragment;
+    });
+    highlightScrolls.forEach((scroll, index) => {
+      scroll.replaceChildren(rails[index]);
+      scroll.closest('.highlight-group').hidden = !scroll.children.length;
+    });
+  } catch { /* Offline/unconfigured Supabase: original photos and original motion remain available. */ }
+  highlightScrolls.forEach(scroll => { if (scroll.children.length) setupHighlightAutoScroll(scroll); });
+}
+loadHighlightCollections();
 
 if ('IntersectionObserver' in window) {
   const sections = Array.from(nav.querySelectorAll('a'));

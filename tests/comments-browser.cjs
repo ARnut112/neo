@@ -68,7 +68,7 @@ const server=http.createServer(async(req,res)=>{
   await page.locator('#comment-open').click();
   assert(await page.locator('#comment-compose').evaluate(e=>e.matches(':modal')));
   await page.keyboard.press('Escape');
-  assert.equal(await page.evaluate(()=>document.activeElement.id),'comment-open');
+  await page.waitForFunction(()=>document.activeElement.id==='comment-open');
   await page.locator('#comment-open').click();
   await page.mouse.click(2,2);
   await page.waitForFunction(()=>!document.querySelector('#comment-compose').open);
@@ -103,7 +103,7 @@ const server=http.createServer(async(req,res)=>{
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:path.join(root,'tests','comments-thanks-mobile.png')});
   await page.locator('#comment-done').click();
-  assert.equal(await page.evaluate(()=>document.activeElement.id),'comment-open');
+  await page.waitForFunction(()=>document.activeElement.id==='comment-open');
   await page.setViewportSize({width:1440,height:950});
   await page.locator('#comment-open').click();
   assert(await page.locator('#comment-input').isVisible());

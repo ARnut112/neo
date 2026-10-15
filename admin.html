@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' blob: https://*.supabase.co; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#121110">
+  <title>คลังภาพ — Arnut Studio</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20261015-portfolio">
+  <link rel="stylesheet" href="admin.css?v=20261015-1">
+  <script src="admin.js?v=20261015-1" defer></script>
+</head>
+<body class="admin-page">
+  <a class="skip-link" href="#admin-main">ข้ามไปยังเนื้อหา</a>
+  <header class="admin-header">
+    <a class="brand" href="/">อาณัฐ<span class="brand-dot">.</span></a>
+    <span class="admin-wordmark">STUDIO / COLLECTIONS</span>
+    <a class="admin-site-link" href="/#highlights" target="_blank" rel="noopener noreferrer">ดูหน้าเว็บไซต์ ↗</a>
+  </header>
+  <main class="admin-shell" id="admin-main">
+    <section class="admin-login-panel" id="admin-login-panel" aria-labelledby="admin-login-title">
+      <div class="admin-login-copy">
+        <p class="eyebrow">BEHIND THE MOMENTS</p>
+        <h1 id="admin-login-title">จัดระเบียบภาพ<br>เล่าเรื่องบทใหม่</h1>
+        <p>พื้นที่จัดการภาพสำหรับช่างภาพ เลือกภาพที่อยากเล่า แล้วส่งต่อไปยังคอลเลกชันบนเว็บไซต์</p>
+        <div class="admin-login-decoration" aria-hidden="true"><span>01 / CURATE</span><span>02 / ARRANGE</span><span>03 / SHARE</span></div>
+      </div>
+      <div class="admin-panel admin-login-card">
+        <span class="admin-lock" aria-hidden="true">↳</span>
+        <h2>เข้าสู่ระบบหลังบ้าน</h2>
+        <p>ใช้บัญชี Google ที่ได้รับสิทธิ์ผู้ดูแล เพื่ออัปโหลดและจัดการภาพของคุณ</p>
+        <button class="admin-button admin-button-gold" id="admin-login" type="button" disabled>เข้าสู่ระบบด้วย Google</button>
+        <button class="admin-button admin-button-quiet" id="admin-check" type="button">ตรวจสอบสิทธิ์อีกครั้ง</button>
+        <p class="admin-status" id="admin-login-status" role="status" aria-live="polite">กำลังตรวจสอบการเข้าสู่ระบบ…</p>
+      </div>
+    </section>
+    <section id="admin-workspace" hidden aria-labelledby="admin-title">
+      <div class="admin-heading">
+        <div><p class="eyebrow">YOUR COLLECTIONS</p><h1 id="admin-title">คลังภาพของคุณ</h1><p class="admin-muted">ภาพใหม่ เรื่องราวใหม่ จัดการได้จากที่เดียว</p></div>
+        <div class="admin-account"><span class="admin-environment" id="admin-environment"></span><span id="admin-user"></span><button type="button" class="admin-button admin-button-quiet" id="admin-logout">ออกจากระบบ</button></div>
+      </div>
+      <div class="admin-stats">
+        <div><strong id="admin-total">—</strong><span>ภาพในคลัง</span></div>
+        <div><strong id="admin-visible">—</strong><span>ภาพที่แสดงบนเว็บ</span></div>
+        <div><strong>04</strong><span>หมวดงาน</span></div>
+      </div>
+      <div class="admin-layout">
+        <aside class="admin-panel admin-upload-panel" aria-labelledby="admin-upload-title">
+          <p class="eyebrow">ADD A MOMENT</p><h2 id="admin-upload-title">เพิ่มภาพใหม่</h2>
+          <form id="admin-upload-form">
+            <label for="admin-category">หมวดงาน</label><select id="admin-category" required></select>
+            <label class="admin-file-label" for="admin-files"><span class="admin-file-icon" aria-hidden="true">＋</span><strong>เลือกภาพที่อยากโชว์</strong><span>JPEG, PNG หรือ WebP · สูงสุดครั้งละ 20 ภาพ</span><input id="admin-files" type="file" accept="image/jpeg,image/png,image/webp" multiple required></label>
+            <div class="admin-file-previews" id="admin-file-previews"></div>
+            <label for="admin-alt">คำอธิบายภาพ <span class="admin-muted">(ไม่บังคับ)</span></label><input id="admin-alt" type="text" maxlength="160" placeholder="เช่น รอยยิ้มในวันสำคัญ">
+            <label for="admin-order">ลำดับเริ่มต้น</label><input id="admin-order" type="number" min="0" max="100000" step="1" value="1000" required>
+            <label class="admin-checkbox"><input id="admin-publish" type="checkbox" checked> แสดงบนเว็บหลังอัปโหลด</label>
+            <button class="admin-button admin-button-gold" id="admin-upload" type="submit">อัปโหลดภาพ</button>
+            <p class="admin-help">ภาพจะย่อให้เหมาะกับเว็บโดยอัตโนมัติ และแสดงในหมวดที่เลือกเมื่อบันทึกสำเร็จ</p>
+          </form>
+          <p class="admin-status" id="admin-upload-status" role="status" aria-live="polite"></p>
+        </aside>
+        <div class="admin-collection">
+          <div class="admin-toolbar"><nav class="admin-filters" id="admin-filters" aria-label="กรองหมวดภาพ"></nav><button type="button" class="admin-button" id="admin-refresh">โหลดใหม่</button></div>
+          <label class="admin-search-label" for="admin-search">ค้นหาในคลังภาพ</label><input type="search" id="admin-search" placeholder="ค้นหาจากคำอธิบายภาพ">
+          <p class="admin-help">เลขลำดับน้อยจะแสดงก่อน กดบันทึกหลังแก้ไขแต่ละภาพ ภาพที่ซ่อนยังอาจเปิดได้จากลิงก์ไฟล์เดิม</p>
+          <p class="admin-status" id="admin-list-status" role="status" aria-live="polite"></p>
+          <div class="admin-photo-grid" id="admin-photos"></div>
+          <p class="admin-empty" id="admin-empty" hidden>ยังไม่มีภาพในหมวดนี้ เริ่มด้วยภาพแรกของคุณได้เลย</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="admin-footer">ARNUT STUDIO <span>ภาพหนึ่งภาพ เรื่องราวหนึ่งบท</span></footer>
+  <dialog class="admin-confirm" id="admin-delete-dialog" aria-labelledby="admin-delete-title">
+    <h2 id="admin-delete-title">ลบภาพนี้?</h2><p id="admin-delete-description"></p>
+    <div class="admin-confirm-actions"><button type="button" class="admin-button" id="admin-delete-cancel" autofocus>เก็บภาพไว้</button><button type="button" class="admin-button admin-button-danger" id="admin-delete-confirm">ลบภาพ</button></div>
+  </dialog>
+</body>
+</html>
